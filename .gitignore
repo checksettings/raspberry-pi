@@ -1,0 +1,4 @@
+# Ignored Files/Folders:
+build/
+*.list
+*.map
