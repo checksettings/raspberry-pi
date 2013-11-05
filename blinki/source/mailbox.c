@@ -1,12 +1,19 @@
 #include "mailbox.h"
 
+
+/* Mailbox memory addresses */
+static volatile uint32_t* MAILBOX_READ   = (uint32_t*) 0x2000B880;
+static volatile uint32_t* MAILBOX_STATUS = (uint32_t*) 0x2000B898;
+static volatile uint32_t* MAILBOX_WRITE  = (uint32_t*) 0x2000B8A0;
+
+
 uint32_t mbox_read()
 {
   uint32_t r = 0;
   do {
-    while (ReadMmReg32(MAIL_BASE, MAIL_STATUS) & MAIL_EMPTY); //wait for data
-    r = ReadMmReg32(MAIL_BASE, MAIL_READ); //Read the data
-  } while ((r & 0xF) != MAIL_FB); //Loop until we received something from the
+    while (*MAILBOX_STATUS & MAILBOX_EMPTY); //wait for data
+    r = *MAILBOX_READ; //Read the data
+  } while ((r & 0xF) != MAILBOX_FB); //Loop until we received something from the
   //frame buffer channel
   return r & 0xFFFFFFF0;
 }
@@ -14,7 +21,7 @@ uint32_t mbox_read()
 void mbox_write(uint32_t v)
 {
   v += MEMORY_OFFSET;
-  while (ReadMmReg32(MAIL_BASE, MAIL_STATUS) & MAIL_FULL); //wait for space
+  while (*MAILBOX_STATUS & MAILBOX_FULL); //wait for space
   //Write the value to the frame buffer channel
-  WriteMmReg32(MAIL_BASE, MAIL_WRITE, MAIL_FB | (v & 0xFFFFFFF0));
+  *MAILBOX_WRITE = MAILBOX_FB | (v & 0xFFFFFFF0);
 }

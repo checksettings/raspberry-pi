@@ -15,6 +15,10 @@
 #define mmio32(x) (*(volatile uint32_t*) (x))
 
 
+/* Static memory areas */
+/* Memory Array for the Mailbox */
+static uint32_t* mailbox = (uint32_t* const) 0x9000;
+
 
 void delay_with_loop(uint32_t value);
 
@@ -23,8 +27,6 @@ void main()
   // set as output
   mmio32(GPIO_FSEL_ADDR + GPFSEL1_OFFS) |= (1<<LED_BIT_SET);
 
-  //~ volatile uint32_t mailbuffer[256] __attribute__ ((aligned (16)));
-  uint32_t* mailbox = MAILBOX_ADDRESS;
   mailbox[0] = 1024;
   mailbox[1] = 768;
   mailbox[2] = 1024;
