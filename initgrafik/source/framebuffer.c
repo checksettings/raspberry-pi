@@ -42,11 +42,23 @@ static void fb_fail(uint32_t num)  // get in her if an error occurs
 		//~ output(num);
 }
 
+/* Initialise the framebuffer with nativ resolution */
+void fb_init_nativ(void)
+{
+  fb_init(0xFFFFFFFF, 0xFFFFFFFF);
+}
+
 /* Initialise the framebuffer */
-uint32_t fb_init(void)
+void fb_init(uint32_t set_fb_x, uint32_t set_fb_y)
 {
   uint32_t var;
   uint32_t count;
+
+  /* min resolution */
+  if(set_fb_x < 640)
+    set_fb_x = 640;
+  if(set_fb_y < 480)
+    set_fb_y = 480;
 
   volatile uint32_t mailbuffer[256] __attribute__((aligned (0x10)));
 
@@ -84,6 +96,11 @@ uint32_t fb_init(void)
   if(fb_x==0 || fb_y==0)
     fb_fail(FBFAIL_GOT_INVALID_RESOLUTION);
 
+  /* check if wished resolution larger then nativ */
+  if(set_fb_x < fb_x)
+    fb_x = set_fb_x;
+  if(set_fb_y < fb_y)
+    fb_y = set_fb_y;
 
   /* Set up screen */
   uint32_t c = 1;
@@ -188,154 +205,154 @@ uint32_t fb_init(void)
   //~ console_write("x");
   //~ console_write(todec(fb_y, 0));
   //~ console_write(COLOUR_POP "\n");
-  return screenbase;
 }
 
 /* Current console text cursor position (ie. where the next character will
  * be written
 */
-//~ static int32_t consx = 0;
-//~ static int32_t consy = 0;
-//~ 
-//~ /* Current fg/bg colour */
-//~ static unsigned short int fgcolour = 0xffff;
-//~ static unsigned short int bgcolour = 0;
-//~ 
-//~ /* A small stack to allow temporary colour changes in text */
-//~ static unsigned int colour_stack[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-//~ static unsigned int colour_sp = 8;
-//~ 
-//~ /* Move to a new line, and, if at the bottom of the screen, scroll the
- //~ * framebuffer 1 character row upwards, discarding the top row
- //~ */
-//~ static void newline()
-//~ {
-  //~ unsigned int source;
-  //~ /* Number of bytes in a character row */
-  //~ register unsigned int rowbytes = CHARSIZE_Y * pitch;
-//~ 
-  //~ consx = 0;
-  //~ if(consy<(max_y-1))
-  //~ {
-    //~ consy++;
-    //~ return;
-  //~ }
-//~ 
-  //~ /* Copy a screen's worth of data (minus 1 character row) from the
-   //~ * second row to the first
-   //~ */
-//~ 
-  //~ /* Calculate the address to copy the screen data from */
-  //~ source = screenbase + rowbytes;
+static int32_t consx = 0;
+static int32_t consy = 0;
+
+/* Current fg/bg colour */
+static uint16_t fgcolour = 0xffff;
+static uint16_t bgcolour = 0;
+
+/* A small stack to allow temporary colour changes in text */
+static uint32_t colour_stack[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+static uint32_t colour_sp = 8;
+
+/* Move to a new line, and, if at the bottom of the screen, scroll the
+ * framebuffer 1 character row upwards, discarding the top row
+ */
+static void newline()
+{
+  uint32_t source;
+  /* Number of bytes in a character row */
+  register uint32_t rowbytes = CHARSIZE_Y * pitch;
+
+  consx = 0;
+  if(consy<(max_y-1))
+  {
+    consy++;
+    return;
+  }
+
+  /* Copy a screen's worth of data (minus 1 character row) from the
+   * second row to the first
+   */
+
+  /* Calculate the address to copy the screen data from */
+  source = screenbase + rowbytes;
   //~ memmove((void *)screenbase, (void *)source, (max_y-1)*rowbytes);
-//~ 
-  //~ /* Clear last line on screen */
+
+  /* Clear last line on screen */
   //~ memclr((void *)(screenbase + (max_y-1)*rowbytes), rowbytes);
-//~ }
-//~ 
-//~ /* Write null-terminated text to the console
- //~ * Supports control characters (see framebuffer.h) for colour and newline
- //~ */
-//~ void console_write(char *text)
-//~ {
+}
+
+/* Write null-terminated text to the console
+ * Supports control characters (see framebuffer.h) for colour and newline
+ */
+void console_write(char *text)
+{
   //~ volatile unsigned short int *ptr;
-//~ 
-  //~ unsigned int row, addr;
-  //~ int col;
-  //~ unsigned char ch;
-//~ 
-  //~ /* Double parentheses to silence compiler warnings about
-   //~ * assignments as boolean values
-   //~ */
-  //~ while((ch = (unsigned char)*text))
-  //~ {
-    //~ text++;
-//~ 
-    //~ /* Deal with control codes */
-    //~ switch(ch)
-    //~ {
-      //~ case 1: fgcolour = 0b1111100000000000; continue;
-      //~ case 2: fgcolour = 0b0000011111100000; continue;
-      //~ case 3: fgcolour = 0b0000000000011111; continue;
-      //~ case 4: fgcolour = 0b1111111111100000; continue;
-      //~ case 5: fgcolour = 0b1111100000011111; continue;
-      //~ case 6: fgcolour = 0b0000011111111111; continue;
-      //~ case 7: fgcolour = 0b1111111111111111; continue;
-      //~ case 8: fgcolour = 0b0000000000000000; continue;
-        //~ /* Half brightness */
-      //~ case 9: fgcolour = (fgcolour >> 1) & 0b0111101111101111; continue;
-      //~ case 10: newline(); continue;
-      //~ case 11: /* Colour stack push */
-        //~ if(colour_sp)
-          //~ colour_sp--;
-        //~ colour_stack[colour_sp] =
-          //~ fgcolour | (bgcolour<<16);
-        //~ continue;
-      //~ case 12: /* Colour stack pop */
-        //~ fgcolour = colour_stack[colour_sp] & 0xffff;
-        //~ bgcolour = colour_stack[colour_sp] >> 16;
-        //~ if(colour_sp<8)
-          //~ colour_sp++;
-        //~ continue;
-      //~ case 17: bgcolour = 0b1111100000000000; continue;
-      //~ case 18: bgcolour = 0b0000011111100000; continue;
-      //~ case 19: bgcolour = 0b0000000000011111; continue;
-      //~ case 20: bgcolour = 0b1111111111100000; continue;
-      //~ case 21: bgcolour = 0b1111100000011111; continue;
-      //~ case 22: bgcolour = 0b0000011111111111; continue;
-      //~ case 23: bgcolour = 0b1111111111111111; continue;
-      //~ case 24: bgcolour = 0b0000000000000000; continue;
-        //~ /* Half brightness */
-      //~ case 25: bgcolour = (bgcolour >> 1) & 0b0111101111101111; continue;
-    //~ }
-//~ 
-    //~ /* Unknown control codes, and anything >127, get turned into
-     //~ * spaces. Anything >=32 <=127 gets 32 subtracted from it to
-     //~ * turn it into a value between 0 and 95, to index into the
-     //~ * character definitions table
-     //~ */
-    //~ if(ch<32)
-    //~ {
-      //~ ch=0;
-    //~ }
-    //~ else
-    //~ {
-      //~ if(ch>127)
-        //~ ch=0;
-      //~ else
-        //~ ch-=32;
-    //~ }
-//~ 
-    //~ /* Plot character onto screen
-     //~ *
-     //~ * CHARSIZE_Y and CHARSIZE_X are the size of the block the
-     //~ * character occupies. The character itself is one pixel
-     //~ * smaller in each direction, and is located in the upper left
-     //~ * of the block
-     //~ */
-    //~ for(row=0; row<CHARSIZE_Y; row++)
-    //~ {
-      //~ addr = (row+consy*CHARSIZE_Y)*pitch + consx*CHARSIZE_X*2;
-//~ 
-      //~ for(col=(CHARSIZE_X-2); col>=0; col--)
-      //~ {
-        //~ ptr = (unsigned short int *)(screenbase+addr);
-//~ 
-        //~ addr+=2;
-//~ 
-        //~ if(row<(CHARSIZE_Y-1) && (teletext[ch][row] & (1<<col)))
-          //~ *ptr = fgcolour;
-        //~ else
-          //~ *ptr = bgcolour;
-      //~ }
-//~ 
-      //~ ptr = (unsigned short int *)(screenbase+addr);
-      //~ *ptr = bgcolour;
-    //~ }
-//~ 
-    //~ if(++consx >=max_x)
-    //~ {
-      //~ newline();
-    //~ }
-  //~ }
-//~ }
+  volatile uint16_t* ptr;
+
+  uint32_t row, addr;
+  int32_t  col;
+  unsigned char ch;
+
+  /* Double parentheses to silence compiler warnings about
+   * assignments as boolean values
+   */
+  while((ch = (unsigned char)*text))
+  {
+    text++;
+
+    /* Deal with control codes */
+    switch(ch)
+    {
+      case 1: fgcolour = 0b1111100000000000; continue;
+      case 2: fgcolour = 0b0000011111100000; continue;
+      case 3: fgcolour = 0b0000000000011111; continue;
+      case 4: fgcolour = 0b1111111111100000; continue;
+      case 5: fgcolour = 0b1111100000011111; continue;
+      case 6: fgcolour = 0b0000011111111111; continue;
+      case 7: fgcolour = 0b1111111111111111; continue;
+      case 8: fgcolour = 0b0000000000000000; continue;
+        /* Half brightness */
+      case 9: fgcolour = (fgcolour >> 1) & 0b0111101111101111; continue;
+      case 10: newline(); continue;
+      case 11: /* Colour stack push */
+        if(colour_sp)
+          colour_sp--;
+        colour_stack[colour_sp] =
+          fgcolour | (bgcolour<<16);
+        continue;
+      case 12: /* Colour stack pop */
+        fgcolour = colour_stack[colour_sp] & 0xffff;
+        bgcolour = colour_stack[colour_sp] >> 16;
+        if(colour_sp<8)
+          colour_sp++;
+        continue;
+      case 17: bgcolour = 0b1111100000000000; continue;
+      case 18: bgcolour = 0b0000011111100000; continue;
+      case 19: bgcolour = 0b0000000000011111; continue;
+      case 20: bgcolour = 0b1111111111100000; continue;
+      case 21: bgcolour = 0b1111100000011111; continue;
+      case 22: bgcolour = 0b0000011111111111; continue;
+      case 23: bgcolour = 0b1111111111111111; continue;
+      case 24: bgcolour = 0b0000000000000000; continue;
+        /* Half brightness */
+      case 25: bgcolour = (bgcolour >> 1) & 0b0111101111101111; continue;
+    }
+
+    /* Unknown control codes, and anything >127, get turned into
+     * spaces. Anything >=32 <=127 gets 32 subtracted from it to
+     * turn it into a value between 0 and 95, to index into the
+     * character definitions table
+     */
+    if(ch<32)
+    {
+      ch=0;
+    }
+    else
+    {
+      if(ch>127)
+        ch=0;
+      else
+        ch-=32;
+    }
+
+    /* Plot character onto screen
+     *
+     * CHARSIZE_Y and CHARSIZE_X are the size of the block the
+     * character occupies. The character itself is one pixel
+     * smaller in each direction, and is located in the upper left
+     * of the block
+     */
+    for(row=0; row<CHARSIZE_Y; row++)
+    {
+      addr = (row+consy*CHARSIZE_Y)*pitch + consx*CHARSIZE_X*2;
+
+      for(col=(CHARSIZE_X-2); col>=0; col--)
+      {
+        ptr = (unsigned short int *)(screenbase+addr);
+
+        addr+=2;
+
+        if(row<(CHARSIZE_Y-1) && (teletext[ch][row] & (1<<col)))
+          *ptr = fgcolour;
+        else
+          *ptr = bgcolour;
+      }
+
+      ptr = (unsigned short int *)(screenbase+addr);
+      *ptr = bgcolour;
+    }
+
+    if(++consx >=max_x)
+    {
+      newline();
+    }
+  }
+}

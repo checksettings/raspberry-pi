@@ -28,43 +28,33 @@ void main()
   // set as output
   mmio32(GPIO_FSEL_ADDR + GPFSEL1_OFFS) |= (1<<LED_BIT_SET);
 
-  //~ mailbox[0] = 1024;
-  //~ mailbox[1] = 768;
-  //~ mailbox[2] = 1024;
-  //~ mailbox[3] = 768;
-  //~ mailbox[4] = 0;
-  //~ mailbox[5] = 16;
-  //~ mailbox[6] = 0;
-  //~ mailbox[7] = 0;
-  //~ mailbox[8] = 0;
-  //~ mailbox[9] = 0;
+  uint32_t fb_x = 640;
+  uint32_t fb_y = 480;
+  fb_init(fb_x, fb_y);
+  //~ fb_init_nativ();
 
-  //~ writemailbox(1, (uint32_t)mailbox);
-  //~ if(readmailbox(1)==0)
-  //~ {
-//~ 
-  //~ }
-
-  uint16_t* start = (uint16_t*) fb_init();
+  console_write("This is my first Output on console!!");
 
   //~ uint16_t* start = (uint16_t*)(mailbox[8]);
-  if(start == 0)
-    mmio32(GPIO_FSEL_ADDR + GPCLR0_OFFS) |= (1<<GPIO_PIN_OFFS);  // switch on led
-  uint16_t color = 0;
-  uint32_t x = 0;
-  uint32_t y = 0;
+  //~ if(start == 0)
+    //~ mmio32(GPIO_FSEL_ADDR + GPCLR0_OFFS) |= (1<<GPIO_PIN_OFFS);  // switch on led
+  //~ uint16_t color = 0;
+  //~ uint32_t x = 0;
+  //~ uint32_t y = 0;
+  //~ while(1)
+  //~ {
+    //~ for(y=0; y < fb_y; ++y)
+    //~ {
+      //~ for(x=0; x < fb_x; ++x)
+      //~ {
+        //~ start[y*fb_x+x] = color;
+      //~ }
+      //~ ++color;
+      //~ if(color > 65000) color = 0;
+    //~ }
+
   while(1)
   {
-    for(y=0; y < 1680; ++y)
-    {
-      for(x=0; x < 1050; ++x)
-      {
-        start[y*1024+x] = color;
-      }
-      ++color;
-      if(color > 65000) color = 0;
-    }
-
     // switch on led
     mmio32(GPIO_FSEL_ADDR + GPCLR0_OFFS) |= (1<<GPIO_PIN_OFFS);
 
