@@ -1,12 +1,10 @@
 @ Writes the 'font.bin' file into the kernel image
   .section .rodata
   .global font
- @.type   font, @object
   .align  4
 font:
   .incbin "font.bin"
   .global fontsize
- @.type   fontsize, @object
   .align  4
 fontsize:
   .int    fontsize - font

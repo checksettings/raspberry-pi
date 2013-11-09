@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 
-extern void fb_init_nativ(void);
-extern void fb_init(uint32_t set_fb_x, uint32_t set_fb_y);
-extern void console_write(char *text);
+extern void fbInitNativ(void);
+extern void fbInit(uint32_t set_fb_x, uint32_t set_fb_y);
+extern void consoleWrite(char *text);
 
 #define GPU_MAILBOX_CHANNEL 8
 

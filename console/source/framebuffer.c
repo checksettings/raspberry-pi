@@ -31,20 +31,20 @@ static uint32_t max_x, max_y;
 /* Framebuffer initialisation failed. Can't display an error, so flashing
  * the OK LED will have to do
  */
-static void fb_fail(uint32_t num)  // get in her if an error occurs
+static void fbFail(uint32_t num)  // get in her if an error occurs
 {
 	while(1);
 		//~ output(num);
 }
 
 /* Initialise the framebuffer with nativ resolution */
-void fb_init_nativ(void)
+void fbInitNativ(void)
 {
-  fb_init(0xFFFFFFFF, 0xFFFFFFFF);
+  fbInit(0xFFFFFFFF, 0xFFFFFFFF);
 }
 
 /* Initialise the framebuffer */
-void fb_init(uint32_t set_fb_x, uint32_t set_fb_y)
+void fbInit(uint32_t set_fb_x, uint32_t set_fb_y)
 {
   uint32_t var;
   uint32_t count;
@@ -67,12 +67,12 @@ void fb_init(uint32_t set_fb_x, uint32_t set_fb_y)
   mailbuffer[6] = 0;		    // Space for vertical resolution
   mailbuffer[7] = 0;		    // End tag
 
-  writemailbox(GPU_MAILBOX_CHANNEL, (uint32_t)mailbuffer);
-  var = readmailbox(GPU_MAILBOX_CHANNEL);
+  writeMailbox(GPU_MAILBOX_CHANNEL, (uint32_t)mailbuffer);
+  var = readMailbox(GPU_MAILBOX_CHANNEL);
 
   /* Valid response in data structure */
   if(mailbuffer[1] != 0x80000000)
-    fb_fail(FBFAIL_GET_RESOLUTION);	
+    fbFail(FBFAIL_GET_RESOLUTION);	
 
   fb_x = mailbuffer[5];
   fb_y = mailbuffer[6];
@@ -88,7 +88,7 @@ void fb_init(uint32_t set_fb_x, uint32_t set_fb_y)
   }
 
   if(fb_x==0 || fb_y==0)
-    fb_fail(FBFAIL_GOT_INVALID_RESOLUTION);
+    fbFail(FBFAIL_GOT_INVALID_RESOLUTION);
 
   /* check if wished resolution larger then nativ */
   if(set_fb_x < fb_x)
@@ -127,12 +127,12 @@ void fb_init(uint32_t set_fb_x, uint32_t set_fb_y)
 
   mailbuffer[0] = c*4;		// Buffer size
 
-  writemailbox(GPU_MAILBOX_CHANNEL, (uint32_t)mailbuffer);
-  var = readmailbox(GPU_MAILBOX_CHANNEL);
+  writeMailbox(GPU_MAILBOX_CHANNEL, (uint32_t)mailbuffer);
+  var = readMailbox(GPU_MAILBOX_CHANNEL);
 
   /* Valid response in data structure */
   if(mailbuffer[1] != 0x80000000)
-    fb_fail(FBFAIL_SETUP_FRAMEBUFFER);	
+    fbFail(FBFAIL_SETUP_FRAMEBUFFER);	
 
   count=2;	/* First tag */
   while((var = mailbuffer[count]))
@@ -147,19 +147,19 @@ void fb_init(uint32_t set_fb_x, uint32_t set_fb_y)
     count += 3+(mailbuffer[count+1]>>2);
 
     if(count>c)
-      fb_fail(FBFAIL_INVALID_TAGS);
+      fbFail(FBFAIL_INVALID_TAGS);
   }
 
   /* 8 bytes, plus MSB set to indicate a response */
   if(mailbuffer[count+2] != 0x80000008)
-    fb_fail(FBFAIL_INVALID_TAG_RESPONSE);
+    fbFail(FBFAIL_INVALID_TAG_RESPONSE);
 
   /* Framebuffer address/size in response */
   screenbase = mailbuffer[count+3];
   screensize = mailbuffer[count+4];
 
   if(screenbase == 0 || screensize == 0)
-    fb_fail(FBFAIL_INVALID_TAG_DATA);
+    fbFail(FBFAIL_INVALID_TAG_DATA);
 
   /* Get the framebuffer pitch (bytes per line) */
   mailbuffer[0] = 7 * 4;		// Total size
@@ -170,16 +170,16 @@ void fb_init(uint32_t set_fb_x, uint32_t set_fb_y)
   mailbuffer[5] = 0;		// Space for pitch
   mailbuffer[6] = 0;		// End tag
 
-  writemailbox(GPU_MAILBOX_CHANNEL, (uint32_t)mailbuffer);
-  var = readmailbox(GPU_MAILBOX_CHANNEL);
+  writeMailbox(GPU_MAILBOX_CHANNEL, (uint32_t)mailbuffer);
+  var = readMailbox(GPU_MAILBOX_CHANNEL);
 
   /* 4 bytes, plus MSB set to indicate a response */
   if(mailbuffer[4] != 0x80000004)
-    fb_fail(FBFAIL_INVALID_PITCH_RESPONSE);
+    fbFail(FBFAIL_INVALID_PITCH_RESPONSE);
 
   pitch = mailbuffer[5];
   if(pitch == 0)
-    fb_fail(FBFAIL_INVALID_PITCH_DATA);
+    fbFail(FBFAIL_INVALID_PITCH_DATA);
 
   /* Need to set up max_x/max_y before using console_write */
   max_x = fb_x / CHARSIZE_X;
@@ -220,7 +220,7 @@ static void newline()
 {
   uint32_t source;
   /* Number of bytes in a character row */
-  register uint32_t rowbytes = CHARSIZE_Y * pitch;
+  uint32_t rowbytes = CHARSIZE_Y * pitch;
 
   consx = 0;
   if(consy<(max_y-1))
@@ -244,7 +244,7 @@ static void newline()
 /* Write null-terminated text to the console
  * Supports control characters (see framebuffer.h) for colour and newline
  */
-void console_write(char *text)
+void consoleWrite(char *text)
 {
   //~ volatile unsigned short int *ptr;
   volatile uint16_t* ptr;

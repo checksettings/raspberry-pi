@@ -4,14 +4,8 @@
 #include <stdint.h>
 
 
-extern uint32_t readmailbox(uint32_t channel);
-extern void writemailbox(uint32_t channel, uint32_t v);
-
-
-#define MAILBOX_FULL      0x80000000
-#define MAILBOX_EMPTY     0x40000000
-
-#define MEMORY_OFFSET     0xC0000000
+extern uint32_t readMailbox(uint32_t channel);
+extern void writeMailbox(uint32_t channel, uint32_t v);
 
 
 #endif /* MAILBOX_H */
