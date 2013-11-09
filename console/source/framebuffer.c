@@ -34,7 +34,7 @@ static uint32_t max_x, max_y;
 static void fbFail(uint32_t num)  // get in her if an error occurs
 {
 	while(1);
-		//~ output(num);
+		//output(num);
 }
 
 /* Initialise the framebuffer with nativ resolution */
@@ -185,18 +185,18 @@ void fbInit(uint32_t set_fb_x, uint32_t set_fb_y)
   max_x = fb_x / CHARSIZE_X;
   max_y = fb_y / CHARSIZE_Y;
 
-  //~ console_write(COLOUR_PUSH BG_BLUE BG_HALF FG_CYAN
-      //~ "Framebuffer initialised. Address = 0x");
-  //~ console_write(tohex(screenbase, sizeof(screenbase)));
-  //~ console_write(" (physical), 0x");
-  //~ console_write(tohex(screenbase, sizeof(screenbase)));
-  //~ console_write(" (virtual), size = 0x");
-  //~ console_write(tohex(screensize, sizeof(screensize)));
-  //~ console_write(", resolution = ");
-  //~ console_write(todec(fb_x, 0));
-  //~ console_write("x");
-  //~ console_write(todec(fb_y, 0));
-  //~ console_write(COLOUR_POP "\n");
+  //console_write(COLOUR_PUSH BG_BLUE BG_HALF FG_CYAN
+      //"Framebuffer initialised. Address = 0x");
+  //console_write(tohex(screenbase, sizeof(screenbase)));
+  //console_write(" (physical), 0x");
+  //console_write(tohex(screenbase, sizeof(screenbase)));
+  //console_write(" (virtual), size = 0x");
+  //console_write(tohex(screensize, sizeof(screensize)));
+  //console_write(", resolution = ");
+  //console_write(todec(fb_x, 0));
+  //console_write("x");
+  //console_write(todec(fb_y, 0));
+  //console_write(COLOUR_POP "\n");
 }
 
 /* Current console text cursor position (ie. where the next character will
@@ -218,9 +218,9 @@ static uint32_t colour_sp = 8;
  */
 static void newline()
 {
-  uint32_t source;
+  //uint32_t source;
   /* Number of bytes in a character row */
-  uint32_t rowbytes = CHARSIZE_Y * pitch;
+  //uint32_t rowbytes = CHARSIZE_Y * pitch;
 
   consx = 0;
   if(consy<(max_y-1))
@@ -234,11 +234,11 @@ static void newline()
    */
 
   /* Calculate the address to copy the screen data from */
-  source = screenbase + rowbytes;
-  //~ memmove((void *)screenbase, (void *)source, (max_y-1)*rowbytes);
+  //source = screenbase + rowbytes;
+  //memmove((void *)screenbase, (void *)source, (max_y-1)*rowbytes);
 
   /* Clear last line on screen */
-  //~ memclr((void *)(screenbase + (max_y-1)*rowbytes), rowbytes);
+  //memclr((void *)(screenbase + (max_y-1)*rowbytes), rowbytes);
 }
 
 /* Write null-terminated text to the console
@@ -246,7 +246,7 @@ static void newline()
  */
 void consoleWrite(char *text)
 {
-  //~ volatile unsigned short int *ptr;
+  //volatile unsigned short int *ptr;
   volatile uint16_t* ptr;
 
   uint32_t row, addr;

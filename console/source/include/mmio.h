@@ -19,6 +19,28 @@
 #ifndef MMIO_H
 #define MMIO_H
 
+// The GPIO registers base address.
+#define	GPIO_BASE  0x20200000
+
+// The offsets for reach register.
+
+// Controls actuation of pull up/down to ALL GPIO pins.
+#define	GPPUD  GPIO_BASE + 0x94
+
+// Controls actuation of pull up/down for specific GPIO pin.
+#define	GPPUDCLK0 GPIO_BASE + 0x98
+
+// Parameters for GPIO with ACT-LED on raspberry pi
+#define GPFSEL1_OFFS   4
+#define LED_BIT_SET    18
+
+#define GPSET0_OFFS    28
+#define GPCLR0_OFFS    40
+#define GPIO_PIN_OFFS  16
+
+#define mmio32(x) (*(volatile uint32_t*) (GPIO_BASE + x))
+
+
     // write to MMIO register
   static inline void mmioWrite(uint32_t reg, uint32_t data) 
   {

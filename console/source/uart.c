@@ -2,17 +2,6 @@
 #include "timer.h"
 #include "uart.h"
 
-	// The GPIO registers base address.
-#define	GPIO_BASE  0x20200000
-
-	// The offsets for reach register.
-
-	// Controls actuation of pull up/down to ALL GPIO pins.
-#define	GPPUD  GPIO_BASE + 0x94
-
-	// Controls actuation of pull up/down for specific GPIO pin.
-#define	GPPUDCLK0 GPIO_BASE + 0x98
-
 	// The base address for UART.
 #define	UART0_BASE  0x20201000
 

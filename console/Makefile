@@ -64,7 +64,7 @@ $(BUILD)%.o: $(SOURCE)%.s
 	$(ARMGNU)-as -I $(SOURCE) $< -o $@
 
 $(BUILD)%.o: $(SOURCE)%.c
-	$(ARMGNU)-gcc -O2 -Wall -nostdlib -nostartfiles -ffreestanding -marm -mcpu=arm1176jzf-s -c $(SOURCE) -I $(INCLUDE) $< -o $@
+	$(ARMGNU)-gcc -O2 -Wall -nostdlib -nostartfiles -ffreestanding -marm -mcpu=arm1176jzf-s -I $(INCLUDE) -c $< -o $@
 
 $(BUILD):
 	mkdir $@
