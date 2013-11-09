@@ -1,5 +1,6 @@
 #include "framebuffer.h"
-
+#include "stdint.h"
+#include "uart.h"
 
 #define GPIO_FSEL_ADDR 0x20200000
 
@@ -19,6 +20,7 @@ void delay_with_loop(uint32_t value);
 
 void main()
 {
+/*
   uint32_t fb_x = 640;
   uint32_t fb_y = 480;
   fb_init(fb_x, fb_y);
@@ -43,6 +45,22 @@ void main()
     // wait 2
     delay_with_loop(WAIT_DELAY);
   }
+*/
+//booting...gib was eingib was einhalloc
+  //uartInit();
+ 
+  char input[7];
+ char test[] ={'g','i','b',' ','w','a','s',' ','e','i','n','\0'}; 
+ uartPuts(test);
+  int count = 6;
+  while(count>0)
+  {
+    input[6-count] =uartGetc();
+    count-- ;
+  }
+  input[6] = 0;
+  uartPuts(input);
+
 }
 
 void delay_with_loop(volatile uint32_t value)
