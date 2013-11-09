@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "framebuffer.h"
-
+#include "uart.h"
 
 #define GPIO_FSEL_ADDR 0x20200000
 
@@ -20,6 +20,7 @@ void delayWithLoop(uint32_t value);
 
 void main()
 {
+/*
   //~ uint32_t fb_x = 640;
   //~ uint32_t fb_y = 480;
   //~ fbInit(fb_x, fb_y);
@@ -44,6 +45,21 @@ void main()
     // wait 2
     delayWithLoop(WAIT_DELAY);
   }
+*/
+  //uartInit();
+ 
+  char input[7];
+  char test[] ={'g','i','b',' ','w','a','s',' ','e','i','n','\n','\0'};
+  uartPuts(test);
+  int count = 6;
+  while(count>0)
+  {
+    input[6-count] =uartGetc();
+    count-- ;
+  }
+  input[6] = 0;
+  uartPuts(input);
+
 }
 
 void delayWithLoop(volatile uint32_t value)

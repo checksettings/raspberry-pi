@@ -1,7 +1,7 @@
+#include <stdint.h>
+
 #ifndef MAILBOX_H
 #define MAILBOX_H
-
-#include <stdint.h>
 
 
 extern uint32_t readMailbox(uint32_t channel);
