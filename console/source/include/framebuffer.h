@@ -7,6 +7,7 @@
 extern void fbInitNativ(void);
 extern void fbInit(uint32_t set_fb_x, uint32_t set_fb_y);
 extern void consoleWrite(char *text);
+extern void consoleWriteChar(uint8_t ch);
 
 #define GPU_MAILBOX_CHANNEL 8
 

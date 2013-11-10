@@ -1,5 +1,7 @@
 #include "framebuffer.h"
 #include "mailbox.h"
+#include "memutils.h"
+
 
 /* Framebuffer initialisation failure codes
  * If the FB can't be initialised, one of the following numbers will be
@@ -24,9 +26,10 @@ extern uint32_t fontsize;  // contains the size of 'font.bin'
 
 /* Screen parameters set in fb_init() */
 static uint32_t screenbase, screensize;
-static uint32_t fb_x, fb_y, pitch;
+static uint32_t fb_x, fb_y;
+static uint32_t pitch;  // pitch -> bytes to get on pixel down on monitor
 /* Max x/y character cell */
-static uint32_t max_x, max_y;
+static uint32_t max_chars_x, max_chars_y;
 
 /* Framebuffer initialisation failed. Can't display an error, so flashing
  * the OK LED will have to do
@@ -181,51 +184,31 @@ void fbInit(uint32_t set_fb_x, uint32_t set_fb_y)
   if(pitch == 0)
     fbFail(FBFAIL_INVALID_PITCH_DATA);
 
-  /* Need to set up max_x/max_y before using console_write */
-  max_x = fb_x / CHARSIZE_X;
-  max_y = fb_y / CHARSIZE_Y;
-
-  //console_write(COLOUR_PUSH BG_BLUE BG_HALF FG_CYAN
-      //"Framebuffer initialised. Address = 0x");
-  //console_write(tohex(screenbase, sizeof(screenbase)));
-  //console_write(" (physical), 0x");
-  //console_write(tohex(screenbase, sizeof(screenbase)));
-  //console_write(" (virtual), size = 0x");
-  //console_write(tohex(screensize, sizeof(screensize)));
-  //console_write(", resolution = ");
-  //console_write(todec(fb_x, 0));
-  //console_write("x");
-  //console_write(todec(fb_y, 0));
-  //console_write(COLOUR_POP "\n");
+  /* Need to set up max_chars_x/max_chars_y before using console_write */
+  max_chars_x = fb_x / CHARSIZE_X;
+  max_chars_y = fb_y / CHARSIZE_Y;
 }
 
 /* Current console text cursor position (ie. where the next character will
  * be written
 */
-static int32_t consx = 0;
-static int32_t consy = 0;
+static int32_t cursor_pos_x = 0;
+static int32_t cursor_pos_y = 0;
 
 /* Current fg/bg colour */
 static uint16_t fgcolour = 0xffff;
 static uint16_t bgcolour = 0;
 
-/* A small stack to allow temporary colour changes in text */
-static uint32_t colour_stack[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-static uint32_t colour_sp = 8;
 
 /* Move to a new line, and, if at the bottom of the screen, scroll the
  * framebuffer 1 character row upwards, discarding the top row
  */
 static void newline()
 {
-  //uint32_t source;
-  /* Number of bytes in a character row */
-  //uint32_t rowbytes = CHARSIZE_Y * pitch;
-
-  consx = 0;
-  if(consy<(max_y-1))
+  cursor_pos_x = 0;
+  if(cursor_pos_y<(max_chars_y-1))
   {
-    consy++;
+    ++cursor_pos_y;
     return;
   }
 
@@ -233,13 +216,76 @@ static void newline()
    * second row to the first
    */
 
+  uint32_t source;
+  /* Number of bytes in a character row */
+  uint32_t rowbytes = CHARSIZE_Y * pitch;
+
   /* Calculate the address to copy the screen data from */
-  //source = screenbase + rowbytes;
-  //memmove((void *)screenbase, (void *)source, (max_y-1)*rowbytes);
+  source = screenbase + rowbytes;
+  memmove((void*)screenbase, (void*)source, (max_chars_y-1)*rowbytes);
 
   /* Clear last line on screen */
-  //memclr((void *)(screenbase + (max_y-1)*rowbytes), rowbytes);
+  memclr((void *)(screenbase + (max_chars_y-1)*rowbytes), rowbytes);
 }
+
+void consoleWriteChar(uint8_t ch)
+{
+  volatile uint16_t* ptr;
+  uint32_t row;
+  int32_t  col;
+
+  switch(ch)
+  {
+    // '\0' NULL:
+    case  0x0: return;
+    // '\b' Backspace
+    case  0x8:
+      if(!cursor_pos_x)
+      {
+        if(!cursor_pos_y)  // alreade on first line, first sign ;o)
+          return;
+        cursor_pos_x = max_chars_x-1;
+        --cursor_pos_y;
+      }
+      else --cursor_pos_x;
+      return;
+    // '\t' horizontal tab
+    case  0x9: return;
+    // '\n' newline
+    case  0xA: newline(); return;
+    // '\v' vertical tab
+    case  0xB: return;
+    // '\r' carriage return
+    case  0xD: return;
+  }
+
+  if(ch > 127) ch=0;
+
+  ptr = (uint16_t*)(screenbase + cursor_pos_y*CHARSIZE_Y*pitch + cursor_pos_x*CHARSIZE_X*2);
+  for(row=0; row<CHARSIZE_Y; ++row)
+  {
+    for(col=0; col<CHARSIZE_X; ++col)
+    {
+      if(font[ch][row] & (1<<col))
+        ptr[col] = fgcolour;
+      else
+        ptr[col] = bgcolour;
+    }
+
+    ptr += fb_x;
+  }
+
+  if(++cursor_pos_x >= max_chars_x)
+  {
+    newline();
+  }
+}
+
+
+// -----------------------------------------------------------------------------
+/* A small stack to allow temporary colour changes in text */
+static uint32_t colour_stack[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+static uint32_t colour_sp = 8;
 
 /* Write null-terminated text to the console
  * Supports control characters (see framebuffer.h) for colour and newline
@@ -322,7 +368,7 @@ void consoleWrite(char *text)
      */
     for(row=0; row<CHARSIZE_Y; row++)
     {
-      addr = (row+consy*CHARSIZE_Y)*pitch + consx*CHARSIZE_X*2;
+      addr = (row+cursor_pos_y*CHARSIZE_Y)*pitch + cursor_pos_x*CHARSIZE_X*2;
 
       for(col=0; col<CHARSIZE_X; ++col)
       {
@@ -340,7 +386,7 @@ void consoleWrite(char *text)
       *ptr = bgcolour;
     }
 
-    if(++consx >=max_x)
+    if(++cursor_pos_x >= max_chars_x)
     {
       newline();
     }
