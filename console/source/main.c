@@ -1,27 +1,31 @@
 #include <stdint.h>
 #include "framebuffer.h"
+#include "stdio.h"
 #include "timer.h"
 #include "mmio.h"
 //#include "uart.h"
 
 
-#define WAIT_DELAY      0x3F0000
+#define WAIT_DELAY      0x7F0000
 
 
-void main()
+void main(void)
 {
   uint32_t fb_x = 640;
   uint32_t fb_y = 480;
   fbInit(fb_x, fb_y);
   //fbInitNativ();
 
-  consoleWrite("This is my first Output on console!!\n");
-  uint8_t text[] = {'g','i','b',' ','w','a','s',' ','e','i','n','!'};
-  int32_t i;
-  for(i=0;i<12;++i)
-  {
-    consoleWriteChar(text[i]);
-  }
+  puts("This is my first Output on console!!");
+  printf("And this my second Output!\n");
+  printf("Hello %s!!\n","World");
+  //printf("Monitor Resolution: X=%u / Y=%u\n",fb_x,fb_y);
+  //uint8_t text[] = {'g','i','b',' ','w','a','s',' ','e','i','n','!'};
+  //int32_t i;
+  //for(i=0;i<12;++i)
+  //{
+    //consoleWriteChar(text[i]);
+  //}
 
   // set as output
   mmio32(GPFSEL1_OFFS) |= (1<<LED_BIT_SET);

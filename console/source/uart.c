@@ -77,10 +77,10 @@ void uartPutc(uint8_t byte)
 	// wait for UART to become ready to transmit
 	while(1) 
   {
-	    if (!(mmioRead(UART0_FR) & (1 << 5))) 
-      {
-    		break;
-      }
+    if (!(mmioRead(UART0_FR) & (1 << 5))) 
+    {
+      break;
+    }
   }
 	mmioWrite(UART0_DR, byte);
 }

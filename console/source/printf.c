@@ -1,5 +1,6 @@
 #include "stdio.h"
 #include "stdarg.h"
+#include "framebuffer.h"
 
 
 typedef struct c_string
@@ -17,15 +18,14 @@ typedef struct c_string
   uint32_t size;
 
 } c_string;
-#define EOF -1
 
-unsigned char const ZEROPAD	= 1;		/* pad with zero */
-unsigned char const SIGN	= 2;		/* unsigned/signed long */
-unsigned char const PLUS	= 4;		/* show plus */
-unsigned char const SPACE	= 8;		/* space if plus */
-unsigned char const LEFT	= 16;		/* left justified */
-unsigned char const SPECIAL	= 32;		/* 0x */
-unsigned char const LARGE	= 64;		/* use 'ABCDEF' instead of 'abcdef' */
+unsigned char const ZEROPAD = 1;  /* pad with zero */
+unsigned char const SIGN    = 2;  /* unsigned/signed long */
+unsigned char const PLUS    = 4;  /* show plus */
+unsigned char const SPACE   = 8;  /* space if plus */
+unsigned char const LEFT    = 16; /* left justified */
+unsigned char const SPECIAL = 32; /* 0x */
+unsigned char const LARGE   = 64; /* use 'ABCDEF' instead of 'abcdef' */
 
 //----------------------------------------------------------------------
 uint32_t strlen ( const char *str )
@@ -96,13 +96,10 @@ void writeFillChars(c_string *output_string, int size, char fill )
  * @param type Output type
  *
  */
-void writeNumber(c_string *output_string, uint32_t number_1,
-                 uint32_t base_1, unsigned int size,
+void writeNumber(c_string *output_string, uint32_t number,
+                 uint32_t base, unsigned int size,
                  unsigned int precision, unsigned char type)
 {
-
-uint32_t number = number_1;
-uint32_t base =base_1;
 	char c;
   char sign,tmp[70];
 	const char *digits;
@@ -136,8 +133,7 @@ uint32_t base =base_1;
 	else while (number != 0)
   {
 		tmp[i++] = digits[number%base];
-    uint32_t test = number / base;
-    number = test;
+    number /= base;
   }
 	if (sign) {
     tmp[i++] = sign;
@@ -355,69 +351,16 @@ int printf(const char *format, ...)
 // function for framebuffer
 //  character_count = write(STDOUT_FILENO,(void*) output_string.start, output_string.length);
 
+  const char* string_ptr = output_string.start;
+  uint32_t to_write = output_string.length;
+  do
+  {
+    consoleWriteChar(*string_ptr++);
+  } while(--to_write);
+
+
   return (int) character_count;
 }
-
-
-//----------------------------------------------------------------------
-/**
- * Writes the given character to stdout.
- * The character is casted to unsigned char.
- *
- * @param character The character for writing
- * @return The character written as unsigned char cast to int or EOF on error
- *
- */
-int putchar(int character)
-{
-  unsigned char output_char = (unsigned char) character;
-//-------TODO---------
-// function for framebuffer
-//  int characters_written = write(STDOUT_FILENO, (void*) &output_char, 1);
-
- // if(!characters_written || (characters_written == -1))
-  //  return EOF;
-
-  return (int) output_char;
-}
-
-//----------------------------------------------------------------------
-/**
- * Writes the given string followed by a newline to stdout.
- *
- * @param output_string The string for writing
- * @return A non-negative number on success or EOF on error
- *
- */
-int puts(const char *output_string)
-{
-  unsigned char newline = '\n';
-  const char *string_ptr = output_string;
-  uint32_t string_length = 0;
-  int characters_written = 0;
-
-  while(string_ptr && *string_ptr++)
-    ++string_length;
-
-  if(string_length)
-  {
-//-------TODO---------
-// function for framebuffer
-//    characters_written = write(STDOUT_FILENO, (void*) output_string, string_length);
-//    if(!characters_written || (characters_written == -1))
-      return EOF;
-  }
-
-//-------TODO---------
-// function for framebuffer
-  //characters_written = write(STDOUT_FILENO, (void*) &newline, 1);
-
-//  if(!characters_written || (characters_written == -1))
- //   return EOF;
-
-  return 0;
-}
-
 
 
 

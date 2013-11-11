@@ -10,15 +10,14 @@ uint32_t __aeabi_uidivmod(uint32_t a, uint32_t b)
    return e;
 }
 
-int __aeabi_idiv(int numerator, int denominator) 
+int32_t __aeabi_idiv(int32_t numerator, int32_t denominator) 
 {
-  int neg_result = (numerator ^ denominator) & 0x80000000;
-  int result = __aeabi_uidivmod ((numerator < 0) ? -numerator : numerator, (denominator < 0) ? -denominator : denominator);
+  int32_t neg_result = (numerator ^ denominator) & 0x80000000;
+  int32_t result = __aeabi_uidivmod ((numerator < 0) ? -numerator : numerator, (denominator < 0) ? -denominator : denominator);
   return neg_result ? -result : result;
 }
 unsigned __aeabi_uidiv(unsigned numerator, unsigned denominator) 
 {
   return __aeabi_uidivmod (numerator, denominator);
 }
-
 

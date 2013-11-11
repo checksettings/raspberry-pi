@@ -21,13 +21,13 @@
 #define CHARSIZE_X	8
 #define CHARSIZE_Y	16
 
-extern unsigned char font[][CHARSIZE_Y];
+extern uint8_t font[][CHARSIZE_Y];
 extern uint32_t fontsize;  // contains the size of 'font.bin'
 
 /* Screen parameters set in fb_init() */
 static uint32_t screenbase, screensize;
 static uint32_t fb_x, fb_y;
-static uint32_t pitch;  // pitch -> bytes to get on pixel down on monitor
+static uint32_t pitch;  // pitch -> bytes to get one pixel down on monitor
 /* Max x/y character cell */
 static uint32_t max_chars_x, max_chars_y;
 
@@ -279,6 +279,16 @@ void consoleWriteChar(uint8_t ch)
   {
     newline();
   }
+}
+
+void consoleForegroundColor(uint16_t color)
+{
+  fgcolour = color;
+}
+
+void consoleBackgroundColor(uint16_t color)
+{
+  bgcolour = color;
 }
 
 
