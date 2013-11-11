@@ -1,6 +1,7 @@
-/* Various memory utilities */
-
 #include "memutils.h"
+
+
+/* Various memory utilities */
 
 /* Clear (set to 0) length bytes of memory starting at address
  */

@@ -3,7 +3,6 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
-
 extern void fbInitNativ(void);
 extern void fbInit(uint32_t set_fb_x, uint32_t set_fb_y);
 extern void consoleWrite(char *text);

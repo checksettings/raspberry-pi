@@ -1,13 +1,12 @@
 #include <stdint.h>
 #include "framebuffer.h"
-#include "uart.h"
+#include "timer.h"
 #include "mmio.h"
+//#include "uart.h"
 
 
 #define WAIT_DELAY      0x3F0000
 
-
-void delayWithLoop(uint32_t value);
 
 void main()
 {
@@ -33,13 +32,13 @@ void main()
     mmio32(GPCLR0_OFFS) |= (1<<GPIO_PIN_OFFS);
 
     // wait 1
-    delayWithLoop(WAIT_DELAY);
+    delay(WAIT_DELAY);
 
     // switch off led
     mmio32(GPSET0_OFFS) |= (1<<GPIO_PIN_OFFS);
 
     // wait 2
-    delayWithLoop(WAIT_DELAY);
+    delay(WAIT_DELAY);
   }
 
   //uartInit();
@@ -58,7 +57,3 @@ void main()
 
 }
 
-void delayWithLoop(volatile uint32_t value)
-{
-  for(;  value != 0; value--);
-}
