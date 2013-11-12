@@ -1,14 +1,20 @@
 #include "stdio.h"
+#include "string.h"
 #include "stdarg.h"
 #include "framebuffer.h"
+#include "uart.h"
+
+
+/* Defines the used output (UART/Framebuffer) */
+static int32_t std_output = 0;
 
 typedef struct c_string
 {
   // start pointer
-  char *start;
+  char* start;
 
   // working pointer
-  char *ptr;
+  char* ptr;
 
   // length of the string
   uint32_t length;
@@ -18,29 +24,26 @@ typedef struct c_string
 
 } c_string;
 
-unsigned char const ZEROPAD = 1;  /* pad with zero */
-unsigned char const SIGN    = 2;  /* unsigned/signed long */
-unsigned char const PLUS    = 4;  /* show plus */
-unsigned char const SPACE   = 8;  /* space if plus */
-unsigned char const LEFT    = 16; /* left justified */
-unsigned char const SPECIAL = 32; /* 0x */
-unsigned char const LARGE   = 64; /* use 'ABCDEF' instead of 'abcdef' */
+uint8_t const ZEROPAD = 1;  /* pad with zero */
+uint8_t const SIGN    = 2;  /* unsigned/signed long */
+uint8_t const PLUS    = 4;  /* show plus */
+uint8_t const SPACE   = 8;  /* space if plus */
+uint8_t const LEFT    = 16; /* left justified */
+uint8_t const SPECIAL = 32; /* 0x */
+uint8_t const LARGE   = 64; /* use 'ABCDEF' instead of 'abcdef' */
 
-//----------------------------------------------------------------------
-uint32_t strlen ( const char *str )
+
+void setStdOutput(int32_t std_out)
 {
-  const char *pos = str;
-
-  while ( *pos )
-  {
-    ++pos;
-  }
-
-  return ( pos - str );
+  std_output = std_out;
 }
 
-//----------------------------------------------------------------------
-int32_t atoi(const char *string)
+int32_t getStdOutput()
+{
+  return std_output;
+}
+
+int32_t atoi(const char* string)
 {
   int32_t number = 0;
   int32_t base = 10;
@@ -68,14 +71,10 @@ int32_t atoi(const char *string)
   return number;
 }
 
-
-
-
-
 /**
  * Writes a number of fill chars into a string
  */
-void writeFillChars(c_string *output_string, int size, char fill )
+void writeFillChars(c_string* output_string, int32_t size, char fill)
 {
   while( size-- > 0 )
   {
@@ -95,16 +94,15 @@ void writeFillChars(c_string *output_string, int size, char fill )
  * @param type Output type
  *
  */
-void writeNumber(c_string *output_string, uint32_t number,
-                 uint32_t base, unsigned int size,
-                 unsigned int precision, unsigned char type)
+void writeNumber(c_string* output_string, uint32_t number, uint32_t base,
+                 uint32_t size, uint32_t precision, uint8_t type)
 {
   char c;
-  char sign,tmp[70];
-  const char *digits;
+  char sign, tmp[70];
+  const char* digits;
   static const char small_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
   static const char large_digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  unsigned int i;
+  uint32_t i;
 
   digits = (type & LARGE) ? large_digits : small_digits;
   if (type & LEFT)
@@ -119,7 +117,7 @@ void writeNumber(c_string *output_string, uint32_t number,
 	if (type & SIGN) {
 		if (((int) number) < 0) {
 			sign = '-';
-			number = - (int) number;
+			number = - (int32_t)number;
 		} else if (type & PLUS) {
 			sign = '+';
 		} else if (type & SPACE) {
@@ -170,7 +168,6 @@ void writeNumber(c_string *output_string, uint32_t number,
   }
 }
 
-//----------------------------------------------------------------------
 /**
  * Writes output to stdout.
  * A detailed description of the format is given in the
@@ -183,16 +180,16 @@ void writeNumber(c_string *output_string, uint32_t number,
  value is returned on failure
  *
  */
-int printf(const char *format, ...)
+int32_t printf(const char* format, ...)
 {
   c_string output_string;
-  int character_count = 256;
+  int32_t character_count = 256;
   char buffer[character_count];
 
-  output_string.start = (char *) &buffer;
-  output_string.ptr = output_string.start;
+  output_string.start  = (char*) &buffer;
+  output_string.ptr    = output_string.start;
   output_string.length = 0;
-  output_string.size = character_count;
+  output_string.size   = character_count;
 
   va_list args;
 
@@ -208,8 +205,8 @@ int printf(const char *format, ...)
 
     if (*format == '%')
     {
-      int width = 0;
-      unsigned char flag = 0;
+      int32_t width = 0;
+      uint8_t flag  = 0;
       ++format;
       switch (*format)
       {
@@ -242,7 +239,7 @@ int printf(const char *format, ...)
         if(character_count < width)
           width = character_count;
       }
-      
+
       switch (*format)
       {
         case '%':
@@ -254,7 +251,7 @@ int printf(const char *format, ...)
 
         case 's':
         {
-          char const *string_arg = va_arg(args, char const*);
+          char const* string_arg = va_arg(args, char const*);
           int len = strlen(string_arg);
 
           // we should align right -> fill with spaces
@@ -299,29 +296,29 @@ int printf(const char *format, ...)
 
         //signed decimal
 		case 'd':
-          writeNumber(&output_string,(unsigned int) va_arg(args,int),10,width, 0, flag | SIGN);
+          writeNumber(&output_string,(uint32_t) va_arg(args,int32_t),10,width, 0, flag | SIGN);
           break;
 
         //octal
         case 'o':
-          writeNumber(&output_string,(unsigned int) va_arg(args,unsigned int),8,width, 0, flag | SPECIAL);
+          writeNumber(&output_string,(uint32_t) va_arg(args,uint32_t),8,width, 0, flag | SPECIAL);
           break;
 
         //unsigned
         case 'u':
-          writeNumber(&output_string,(unsigned int) va_arg(args,unsigned int),10,width, 0, flag );
+          writeNumber(&output_string,(uint32_t) va_arg(args,uint32_t),10,width, 0, flag );
           break;
 
         case 'x':
-          writeNumber(&output_string,(unsigned int) va_arg(args,unsigned int),16,width, 0, flag | SPECIAL);
+          writeNumber(&output_string,(uint32_t) va_arg(args,uint32_t),16,width, 0, flag | SPECIAL);
           break;
 
         case 'X':
-          writeNumber(&output_string,(unsigned int) va_arg(args,unsigned int), 16, width, 0, flag | SPECIAL | LARGE);
+          writeNumber(&output_string,(uint32_t) va_arg(args,uint32_t), 16, width, 0, flag | SPECIAL | LARGE);
           break;
 
         case 'c':
-          *output_string.ptr++ = (char) va_arg(args,unsigned int);
+          *output_string.ptr++ = (char) va_arg(args,uint32_t);
           ++output_string.length;
           break;
 
@@ -347,11 +344,14 @@ int printf(const char *format, ...)
   uint32_t to_write = output_string.length;
   do
   {
-    consoleWriteChar(*string_ptr++);
+    if(!std_output)
+      uartPutc(*string_ptr++);
+    else
+      consoleWriteChar(*string_ptr++);
   } while(--to_write);
 
 
-  return (int) character_count;
+  return (int32_t) character_count;
 }
 
 

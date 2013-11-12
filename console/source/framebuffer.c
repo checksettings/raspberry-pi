@@ -1,13 +1,13 @@
 #include "framebuffer.h"
 #include "mailbox.h"
 #include "memutils.h"
+#include "stdio.h"
 
 
 /* Framebuffer initialisation failure codes
  * If the FB can't be initialised, one of the following numbers will be
  * flashed on the OK LED
  */
-
 #define FBFAIL_GET_RESOLUTION		        1  /* Mailbox call to get screen resolution failed */
 #define FBFAIL_GOT_INVALID_RESOLUTION	  2  /* Mailbox call returned bad resolution */
 #define FBFAIL_SETUP_FRAMEBUFFER	      3  /* Mailbox call to setup FB failed */
@@ -187,11 +187,13 @@ void fbInit(uint32_t set_fb_x, uint32_t set_fb_y)
   /* Need to set up max_chars_x/max_chars_y before using console_write */
   max_chars_x = fb_x / CHARSIZE_X;
   max_chars_y = fb_y / CHARSIZE_Y;
+
+  setStdOutput(1);
 }
 
 /* Current console text cursor position (ie. where the next character will
  * be written
-*/
+ */
 static int32_t cursor_pos_x = 0;
 static int32_t cursor_pos_y = 0;
 
@@ -203,9 +205,9 @@ static uint16_t bgcolour = 0;
 /* Move to a new line, and, if at the bottom of the screen, scroll the
  * framebuffer 1 character row upwards, discarding the top row
  */
-static void newline()
+static void newline(int32_t new_cursor_pos_x)
 {
-  cursor_pos_x = 0;
+  cursor_pos_x = new_cursor_pos_x;
   if(cursor_pos_y<(max_chars_y-1))
   {
     ++cursor_pos_y;
@@ -228,45 +230,18 @@ static void newline()
   memclr((void *)(screenbase + (max_chars_y-1)*rowbytes), rowbytes);
 }
 
-void consoleWriteChar(uint8_t ch)
+static void writeField(uint8_t character)
 {
   volatile uint16_t* ptr;
   uint32_t row;
   int32_t  col;
-
-  switch(ch)
-  {
-    // '\0' NULL:
-    case  0x0: return;
-    // '\b' Backspace
-    case  0x8:
-      if(!cursor_pos_x)
-      {
-        if(!cursor_pos_y)  // alreade on first line, first sign ;o)
-          return;
-        cursor_pos_x = max_chars_x-1;
-        --cursor_pos_y;
-      }
-      else --cursor_pos_x;
-      return;
-    // '\t' horizontal tab
-    case  0x9: return;
-    // '\n' newline
-    case  0xA: newline(); return;
-    // '\v' vertical tab
-    case  0xB: return;
-    // '\r' carriage return
-    case  0xD: return;
-  }
-
-  if(ch > 127) ch=0;
 
   ptr = (uint16_t*)(screenbase + cursor_pos_y*CHARSIZE_Y*pitch + cursor_pos_x*CHARSIZE_X*2);
   for(row=0; row<CHARSIZE_Y; ++row)
   {
     for(col=0; col<CHARSIZE_X; ++col)
     {
-      if(font[ch][row] & (1<<col))
+      if(font[character][row] & (1<<col))
         ptr[col] = fgcolour;
       else
         ptr[col] = bgcolour;
@@ -274,11 +249,57 @@ void consoleWriteChar(uint8_t ch)
 
     ptr += fb_x;
   }
+}
+
+static void oneFieldBack()
+{
+  if(!cursor_pos_x)
+  {
+    if(!cursor_pos_y)  // alreade on first line, first sign ;o)
+      return;
+    cursor_pos_x = max_chars_x-1;
+    --cursor_pos_y;
+  }
+  else --cursor_pos_x;
+}
+
+void consoleWriteChar(uint8_t character)
+{
+  switch(character)
+  {
+    // '\0' NULL:
+    case  0x0: return;
+    // '\b' Backspace
+    case  0x8:
+      oneFieldBack();
+      return;
+    // '\t' horizontal tab
+    case  0x9:
+      do {
+        if(++cursor_pos_x >= max_chars_x) newline(0);
+      } while((cursor_pos_x) & 7);
+      return;
+    // '\n' newline
+    case  0xA: newline(0); return;
+    // '\v' vertical tab
+    case  0xB:
+      newline(cursor_pos_x);
+      return;
+    // '\r' carriage return
+    case  0xD: return;
+    // ASCII 'DEL'
+    case 0x7F:
+      oneFieldBack();
+      writeField(' '); /* Write a Space to clear the Field */
+      return;
+  }
+
+  if(character > 127) character = 0;
+
+  writeField(character);
 
   if(++cursor_pos_x >= max_chars_x)
-  {
-    newline();
-  }
+    newline(0);
 }
 
 void consoleForegroundColor(uint16_t color)
