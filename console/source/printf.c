@@ -2,7 +2,6 @@
 #include "stdarg.h"
 #include "framebuffer.h"
 
-
 typedef struct c_string
 {
   // start pointer
@@ -100,17 +99,17 @@ void writeNumber(c_string *output_string, uint32_t number,
                  uint32_t base, unsigned int size,
                  unsigned int precision, unsigned char type)
 {
-	char c;
+  char c;
   char sign,tmp[70];
-	const char *digits;
-	static const char small_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-	static const char large_digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	unsigned int i;
+  const char *digits;
+  static const char small_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+  static const char large_digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  unsigned int i;
 
-	digits = (type & LARGE) ? large_digits : small_digits;
-	if (type & LEFT)
+  digits = (type & LARGE) ? large_digits : small_digits;
+  if (type & LEFT)
   {
-		type &= ~ZEROPAD;
+    type &= ~ZEROPAD;
     size = 0;  //no padding then
   }
 	if (base < 2 || base > 36)
@@ -135,6 +134,7 @@ void writeNumber(c_string *output_string, uint32_t number,
 		tmp[i++] = digits[number%base];
     number /= base;
   }
+
 	if (sign) {
     tmp[i++] = sign;
   }
@@ -187,8 +187,6 @@ int printf(const char *format, ...)
 {
   c_string output_string;
   int character_count = 256;
-
-
   char buffer[character_count];
 
   output_string.start = (char *) &buffer;
@@ -244,7 +242,7 @@ int printf(const char *format, ...)
         if(character_count < width)
           width = character_count;
       }
-
+      
       switch (*format)
       {
         case '%':
@@ -278,8 +276,7 @@ int printf(const char *format, ...)
             {
               break;
             }
-
-
+            
             *output_string.ptr++ = *string_arg++;
             --character_count;
             ++output_string.length;
@@ -301,7 +298,7 @@ int printf(const char *format, ...)
         }
 
         //signed decimal
-        case 'd':
+		case 'd':
           writeNumber(&output_string,(unsigned int) va_arg(args,int),10,width, 0, flag | SIGN);
           break;
 
@@ -345,11 +342,6 @@ int printf(const char *format, ...)
   }
 
   va_end(args);
-
-
-//-------TODO---------
-// function for framebuffer
-//  character_count = write(STDOUT_FILENO,(void*) output_string.start, output_string.length);
 
   const char* string_ptr = output_string.start;
   uint32_t to_write = output_string.length;

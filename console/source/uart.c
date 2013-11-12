@@ -1,6 +1,7 @@
 #include "mmio.h"
 #include "timer.h"
 #include "uart.h"
+#include "stdio.h"
 
 	// The base address for UART.
 #define	UART0_BASE  0x20201000
