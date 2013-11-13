@@ -241,7 +241,7 @@ static void writeField(uint8_t character)
   {
     for(col=0; col<CHARSIZE_X; ++col)
     {
-      if(font[character][row] & (1<<col))
+      if(font[character][row] & (128>>col))
         ptr[col] = fgcolour;
       else
         ptr[col] = bgcolour;
@@ -293,8 +293,6 @@ void consoleWriteChar(uint8_t character)
       writeField(' '); /* Write a Space to clear the Field */
       return;
   }
-
-  if(character > 127) character = 0;
 
   writeField(character);
 
