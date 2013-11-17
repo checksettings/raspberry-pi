@@ -3,3 +3,7 @@ build/
 *.list
 *.map
 *.img
+*.elf
+*.d
+*.o
+*~
