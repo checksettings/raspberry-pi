@@ -224,10 +224,10 @@ static void newline(int32_t new_cursor_pos_x)
 
   /* Calculate the address to copy the screen data from */
   source = screenbase + rowbytes;
-  memmove((void*)screenbase, (void*)source, (max_chars_y-1)*rowbytes);
+  memmove((void*)screenbase, (void*)source, (max_chars_y-1) * rowbytes);
 
   /* Clear last line on screen */
-  memclr((void *)(screenbase + (max_chars_y-1)*rowbytes), rowbytes);
+  memclr((void*)(screenbase + (max_chars_y-1)*rowbytes), rowbytes);
 }
 
 static void writeField(uint8_t character)
@@ -263,30 +263,52 @@ static void oneFieldBack()
   else --cursor_pos_x;
 }
 
+static void clearScreen(void)
+{
+  cursor_pos_x = 0;
+  cursor_pos_y = 0;
+
+  /* Clear all lines on screen */
+  memclr((void*)screenbase, fb_y * pitch);
+}
+
 void consoleWriteChar(uint8_t character)
 {
   switch(character)
   {
     // '\0' NULL:
     case  0x0: return;
+
     // '\b' Backspace
     case  0x8:
       oneFieldBack();
       return;
+
     // '\t' horizontal tab
     case  0x9:
       do {
         if(++cursor_pos_x >= max_chars_x) newline(0);
       } while((cursor_pos_x) & 7);
       return;
+
     // '\n' newline
-    case  0xA: newline(0); return;
+    case  0xA:
+      newline(0);
+      return;
+
     // '\v' vertical tab
     case  0xB:
       newline(cursor_pos_x);
       return;
+
+    // '\f' form feed (clears screen)
+    case  0xC:
+      clearScreen();
+      return;
+
     // '\r' carriage return
     case  0xD: return;
+
     // ASCII 'DEL'
     case 0x7F:
       oneFieldBack();
