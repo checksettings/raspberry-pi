@@ -21,31 +21,33 @@
 
 #include <stdint.h>
 
-namespace UART {
-    /*
-     * Initialize UART0.
-     */
-    void init(void);
+namespace UART
+{
+  /*
+   * Initialize UART0.
+   */
+  void init(void);
 
-    /*
-     * Transmit a byte via UART0.
-     * uint8_t Byte: byte to send.
-     */
-    void putc(uint8_t byte);
+  /*
+   * Transmit a byte via UART0.
+   * uint8_t Byte: byte to send.
+   */
+  void putc(uint8_t byte);
 
-    /*
-     * Receive a byte via UART0.
-     *
-     * Returns:
-     * uint8_t: byte received.
-     */
-    uint8_t getc(void);
+  /*
+   * Receive a byte via UART0.
+   *
+   * Returns:
+   * uint8_t: byte received.
+   */
+  uint8_t getc(void);
 
-    /*
-     * print a string to the UART one character at a time
-     * const char *str: 0-terminated string
-     */
-    void puts(const char *str);
+  /*
+   * print a string to the UART one character at a time
+   * const char *str: 0-terminated string
+   */
+  void puts(const char *str);
 }
 
 #endif // #ifndef UART_H
+

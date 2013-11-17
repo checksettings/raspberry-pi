@@ -21,22 +21,27 @@
 
 #include <stdint.h>
 
-namespace MMIO {
-    // write to MMIO register
-    static inline void write(uint32_t reg, uint32_t data) {
-	uint32_t *ptr = (uint32_t*)reg;
-	asm volatile("str %[data], [%[reg]]"
-		     : : [reg]"r"(ptr), [data]"r"(data));
-    }
+namespace MMIO
+{
+  // write to MMIO register
+  static inline void write(uint32_t reg, uint32_t data)
+  {
+    uint32_t *ptr = (uint32_t*)reg;
+    asm volatile("str %[data], [%[reg]]"
+            : : [reg]"r"(ptr), [data]"r"(data));
+  }
 
-    // read from MMIO register
-    static inline uint32_t read(uint32_t reg) {
-	uint32_t *ptr = (uint32_t*)reg;
-	uint32_t data;
-	asm volatile("ldr %[data], [%[reg]]"
-		     : [data]"=r"(data) : [reg]"r"(ptr));
-	return data;
-    }
+  // read from MMIO register
+  static inline uint32_t read(uint32_t reg)
+  {
+    uint32_t *ptr = (uint32_t*)reg;
+    uint32_t data;
+    asm volatile("ldr %[data], [%[reg]]"
+            : [data]"=r"(data) : [reg]"r"(ptr));
+    return data;
+  }
+
 }
 
 #endif // #ifndef MMIO_H
+

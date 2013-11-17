@@ -15,7 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-	
+
 // To keep this in the first portion of the binary.
 .section ".text.boot"
 
@@ -29,44 +29,45 @@
 // r2 -> 0x00000100 - start of ATAGS
 // preserve these registers as argument for kernel_main
 Start:
-	// Setup the stack.
-	mov	sp, #0x8000
+  // Setup the stack.
+  mov	sp, #0x8000
 
-	// we're loaded at 0x8000, relocate to _start.
+  // we're loaded at 0x8000, relocate to _start.
 .relocate:
-	// copy from r3 to r4.
-	mov	r3, #0x8000
-	ldr	r4, =_start
-	ldr	r9, =_data_end
+  // copy from r3 to r4.
+  mov	r3, #0x8000
+  ldr	r4, =_start
+  ldr	r9, =_data_end
 1:
-	// Load multiple from r3, and store at r4.
-	ldmia	r3!, {r5-r8}
-	stmia	r4!, {r5-r8}
+  // Load multiple from r3, and store at r4.
+  ldmia	r3!, {r5-r8}
+  stmia	r4!, {r5-r8}
 
-	// If we're still below file_end, loop.
-	cmp	r4, r9
-	blo	1b
+  // If we're still below file_end, loop.
+  cmp	r4, r9
+  blo	1b
 
-	// Clear out bss.
-	ldr	r4, =_bss_start
-	ldr	r9, =_bss_end
-	mov	r5, #0
-	mov	r6, #0
-	mov	r7, #0
-	mov	r8, #0
+  // Clear out bss.
+  ldr	r4, =_bss_start
+  ldr	r9, =_bss_end
+  mov	r5, #0
+  mov	r6, #0
+  mov	r7, #0
+  mov	r8, #0
 1:
-	// store multiple at r4.
-	stmia	r4!, {r5-r8}
+  // store multiple at r4.
+  stmia	r4!, {r5-r8}
 
-	// If we're still below bss_end, loop.
-	cmp	r4, r9
-	blo	1b
+  // If we're still below bss_end, loop.
+  cmp	r4, r9
+  blo	1b
 
-	// Call kernel_main
-	ldr	r3, =kernel_main
-	blx	r3
+  // Call kernel_main
+  ldr	r3, =kernel_main
+  blx	r3
 
-	// halt
+  // halt
 halt:
-	wfe
-	b	halt
+  wfe
+  b	halt
+
