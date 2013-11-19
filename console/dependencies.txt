@@ -33,4 +33,7 @@ stdio.h:
     string.h
     uart.h
 
+stdlib.(h/c):
+  uart.h
+  stdio.h  (only needed if you want to use the monitor output)
 
