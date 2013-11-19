@@ -22,17 +22,18 @@ void writeTextInBox(const char* text)  // only one Line (don't use newlines)
 
 void main(void)
 {
-  //uint32_t fb_x = 640;
-  //uint32_t fb_y = 480;
-  //fbInit(fb_x, fb_y);
+  uint32_t fb_x = 640;
+  uint32_t fb_y = 480;
+  fbInit(fb_x, fb_y);
+  setStdOutput(OUTPUT_MONITOR);
   //fbInitNativ();
-  //uartInit();
+  uartInit();
 
   writeTextInBox("Welcome to Martins and Manuels Shell!!");
 
   printf("start address of heap: %x\n", &_heap_start);
 
-  //setStdOutput(0);
+  //setStdOutput(OUTPUT_UART);
   //printf("Monitor Resolution: X=%u / Y=%u\n",fb_x,fb_y);
 
   // More printable signs available ;)

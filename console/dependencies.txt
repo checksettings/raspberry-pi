@@ -1,0 +1,36 @@
+stdarg.h:
+  no dependencies
+
+division.c:
+  no dependencies
+
+mailbox.(h/c):
+  no dependencies
+
+memutils.(h/c):
+  no dependencies
+
+timer.(h/c):
+  no dependencies
+
+string.(h/c):
+  no dependencies
+
+uart.(h/c):
+  timer.h
+  mmio.h
+
+framebuffer.(h/c):
+  mailbox.h
+  memutils.h
+
+stdio.h:
+  stdout.c:
+    framebuffer.h
+  printf.c:
+    framebuffer.h  (can be removed if not needed -> output from printf always on uart)
+    stdarg.h
+    string.h
+    uart.h
+
+

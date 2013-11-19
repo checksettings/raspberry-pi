@@ -1,7 +1,6 @@
 #include "framebuffer.h"
 #include "mailbox.h"
 #include "memutils.h"
-#include "stdio.h"
 
 
 /* Framebuffer initialisation failure codes
@@ -187,8 +186,6 @@ void fbInit(uint32_t set_fb_x, uint32_t set_fb_y)
   /* Need to set up max_chars_x/max_chars_y before using console_write */
   max_chars_x = fb_x / CHARSIZE_X;
   max_chars_y = fb_y / CHARSIZE_Y;
-
-  setStdOutput(1);
 }
 
 /* Current console text cursor position (ie. where the next character will

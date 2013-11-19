@@ -1,12 +1,12 @@
 #include "stdio.h"
 #include "string.h"
 #include "stdarg.h"
-#include "framebuffer.h"
+#include "framebuffer.h"  // can be removed if not needed -> output from printf always on uart
 #include "uart.h"
 
 
 /* Defines the used output (UART/Framebuffer) */
-static int32_t std_output = 0;
+static int32_t std_output = OUTPUT_UART;
 
 typedef struct c_string
 {
@@ -340,14 +340,19 @@ int32_t printf(const char* format, ...)
 
   va_end(args);
 
+
   const char* string_ptr = output_string.start;
   uint32_t to_write = output_string.length;
   do
   {
+#ifdef FRAMEBUFFER_H
     if(!std_output)
       uartPutc(*string_ptr++);
     else
       consoleWriteChar(*string_ptr++);
+#else
+    uartPutc(*string_ptr++);
+#endif
   } while(--to_write);
 
 
