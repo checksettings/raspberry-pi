@@ -7,60 +7,64 @@
 ******************************************************************************/
 
 SECTIONS {
-	/*
-	* First and formost we need the .init section, containing the code to 
-        * be run first. We allow room for the ATAGs and stack and conform to 
-        * the bootloader's expectation by putting this code at 0x8000.
-	*/
-	.init 0x8000 : {
-		*(.init)
-	}
-	
-	/* 
-	* Next we put the data.
-	*/
-	.data : {
-		*(.data)
-		*.c.o(*)
-	}
+  /*
+  * First and formost we need the .init section, containing the code to 
+  * be run first. We allow room for the ATAGs and stack and conform to 
+  * the bootloader's expectation by putting this code at 0x8000.
+  */
+  .init 0x8000 : {
+          *(.init)
+  }
 
-	.bss : {
-		*(.bss)
-	}
+  /* 
+  * Next we put the data.
+  */
+  .data : {
+          *(.data)
+          *.c.o(*)
+  }
 
-	.text.startup : {
-		*(.text.startup)
-	}
-	/* 
-	* Next we put the rest of the code.
-	*/
-	.text : {
-		*.c.o(.text)
-		*(.text)
-	}
-	. = ALIGN(4096); /* align to page size */
-    _text_end = .;
+  .bss : {
+          *(.bss)
+  }
 
-    _rodata_start = .;
-    .rodata :
-    {
-        *(.rodata)
-    }
-	.rodata.str1.4 :
-    {
-        *(.rodata.str1.4)
-    }
-	
-	COMMON :
-	{
-		*(COMMON)
-	}
+  .text.startup : {
+          *(.text.startup)
+  }
 
-	/*
-	* Finally comes everything else. A fun trick here is to put all other 
-	* sections into this section, which will be discarded by default.
-	*/
-	/DISCARD/ : {
-		*(*)
-	}
+  /* 
+  * Next we put the rest of the code.
+  */
+  .text : {
+          *.c.o(.text)
+          *(.text)
+  }
+  . = ALIGN(4096); /* align to page size */
+  _text_end = .;
+
+  _rodata_start = .;
+  .rodata : {
+          *(.rodata)
+  }
+  .rodata.str1.4 : {
+          *(.rodata.str1.4)
+  }
+
+  COMMON : {
+          *(COMMON)
+  }
+
+  /*
+  * Finally comes everything else. A fun trick here is to put all other 
+  * sections into this section, which will be discarded by default.
+  */
+  /DISCARD/ : {
+          *(*)
+  }
+
+  /*
+  * This is the first address where no program data lies
+  * her we can put our heap
+  */
+  _heap_start = .;
 }

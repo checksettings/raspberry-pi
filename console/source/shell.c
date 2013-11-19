@@ -5,7 +5,6 @@
 
 void shell(void)
 {
-  consoleForegroundColor(0b1111100000000000);
   printf("Starting comandline\n");
 
   uint32_t exit = 1;
@@ -30,6 +29,6 @@ void shell(void)
 
     //exit =0;
   }
-  consoleForegroundColor(0b1111100000000000);
   printf("Close comandline");
 }
+

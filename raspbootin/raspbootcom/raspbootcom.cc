@@ -47,7 +47,8 @@ void do_exit(int fd, int res)
 }
 
 // open serial connection
-int open_serial(const char *dev) {
+int open_serial(const char *dev)
+{
   // The termios structure, to be configured for serial interface.
   struct termios termios;
 
