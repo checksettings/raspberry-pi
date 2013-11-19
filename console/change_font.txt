@@ -1,0 +1,6 @@
+To change the font of the framebuffer output you must only replace the
+file 'font.bin' contained in the project. Take one of the fonts from
+folder 'fonts', copy it into the project folder where the old file was
+located and rename it to 'font.bin'.
+You could take every other font which has size 8x16 pixel and is in a
+binary format.

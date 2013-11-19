@@ -1,18 +1,9 @@
-# Object files
+# Ignored Files/Folders:
+build/
+*.list
+*.map
+*.img
+*.elf
+*.d
 *.o
-*.ko
-
-# Libraries
-*.lib
-*.a
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
+*~
