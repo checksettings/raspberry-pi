@@ -222,6 +222,7 @@ int main(int argc, char *argv[])
   size_t end = 0;
   bool done = false, leave = false;
   int breaks = 0;
+  int user_shutdown = 0;
 
   printf("Raspbootcom V1.0\n");
 
@@ -388,10 +389,22 @@ int main(int argc, char *argv[])
           while(p < &buf2[len])
           {
             const char *q = index(p, '\x03');
-            if (q == NULL)
-              q = &buf2[len];
+            const char *z = index(p, '\x04');
 
-            if (p == q)
+            if(z == NULL)
+                if (q == NULL)
+                    q = &buf2[len];
+            if (p == z)
+            {
+                ++user_shutdown;
+                ++p;
+                if(user_shutdown == 3)
+                {
+                    fprintf(stderr, "Raspbootcom shutdown by user\n");
+                    do_exit(-1, EXIT_SUCCESS);
+                    user_shutdown = 0;
+                }
+            }else if (p == q)
             {
               ++breaks;
               ++p;
@@ -419,7 +432,26 @@ int main(int argc, char *argv[])
                 }
                 breaks -= len2;
               }
-
+              while(user_shutdown > 0)
+              {
+                  ssize_t len2 = write(STDOUT_FILENO, "\x04\x04\x04", user_shutdown);
+                  if (len2 == -1)
+                  {
+                    perror("write()");
+                    do_exit(fd, EXIT_FAILURE);
+                  }
+                  user_shutdown -= len2;
+              }
+              while(p < z)
+              {
+                ssize_t len2 = write(STDOUT_FILENO, p, z - p);
+                if (len2 == -1)
+                {
+                  perror("write()");
+                  do_exit(fd, EXIT_FAILURE);
+                }
+                p += len2;
+              }
               while(p < q)
               {
                 ssize_t len2 = write(STDOUT_FILENO, p, q - p);

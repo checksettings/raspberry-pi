@@ -31,9 +31,8 @@ void main(void)
 
   writeTextInBox("Welcome to Martins and Manuels Shell!!");
 
+/*
   printf("start address of heap: %x\n", &_heap_start);
-
-
 
   uint32_t* test1 = malloc(5*sizeof(uint32_t));
   printf("test1: %x\n", test1);
@@ -69,11 +68,12 @@ void main(void)
     putchar(i);
   }
   putchar('\n');
+*/
+  shell();
+//  printf("wieder in der main am ende\n");
 
-  //shell();
-
-  while(1)
-    uartPutc(uartGetc());
+//  while(1)
+  //  uartPutc(uartGetc());
 
 }
 
