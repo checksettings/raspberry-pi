@@ -1,5 +1,5 @@
-#include "framebuffer.h"
 #include "stdio.h"
+#include "framebuffer.h"
 
 
 /**
@@ -18,7 +18,7 @@ int32_t putchar(int32_t character)
 }
 
 /**
- * Writes the given string followed by a newline to stdout.
+ * Writes the given string to stdout.
  *
  * @param output_string The string for writing
  * @return A non-negative number on success
@@ -33,9 +33,6 @@ int32_t puts(const char* output_string)
     consoleWriteChar(*output_string++);
     ++string_length;
   }
-
-  consoleWriteChar('\n');
-  ++string_length;
 
   return string_length;
 }

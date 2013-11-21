@@ -3,7 +3,9 @@
 #ifndef STDIO_H
 #define STDIO_H
 
-#define EOF -1
+#define EOF            -1
+#define OUTPUT_UART     0
+#define OUTPUT_MONITOR  1
 
 extern int32_t putchar(int32_t ch);
 extern int32_t puts(const char *output_string);

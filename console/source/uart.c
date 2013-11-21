@@ -1,7 +1,6 @@
+#include "uart.h"
 #include "mmio.h"
 #include "timer.h"
-#include "uart.h"
-#include "stdio.h"
 
 
 // The base address for UART.
