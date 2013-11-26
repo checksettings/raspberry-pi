@@ -24,7 +24,7 @@ void main(void)
 {
   //uint32_t fb_x = 640;
   //uint32_t fb_y = 480;
-  //fbInit(fb_x, fb_y);
+  //fbInit(fb_x, fb_y, COLORMODE_32BIT);
   //setStdOutput(OUTPUT_MONITOR);
   //fbInitNativ();
   uartInit();
@@ -56,7 +56,6 @@ void main(void)
   printf("test4: %x\n", test4);
 
 
-
   //setStdOutput(OUTPUT_UART);
   //printf("Monitor Resolution: X=%u / Y=%u\n",fb_x,fb_y);
 
@@ -69,6 +68,7 @@ void main(void)
   }
   putchar('\n');
 */
+
   shell();
 //  printf("wieder in der main am ende\n");
 
