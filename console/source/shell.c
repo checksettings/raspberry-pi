@@ -3,15 +3,16 @@
 #include "stdio.h"
 #include "string.h"
 
-
 void shell(void)
 {
   printf("Starting comandline\n");
 
+  //printf("name: %s", commands_name[1]);
+
   uint32_t exit = 1;
   int32_t len = 0;
   char input[64];
-
+  uint32_t counter = 0;
   while(exit)
   {
     do
@@ -29,13 +30,17 @@ void shell(void)
     else if(strcmp(input,"shutdown\n")== 0){ printf("shutdown...\n"); uartPuts("\x04\x04\x04");}
     else
     {
-      printf("this command is not implemented yet\n");
+      while(strcmp(commands_name[counter],"\0")!=0){
+        //printf("bin in while counter = %d\n", counter);
+        commands[counter]();
+        counter++;
+      }
     }
-    //new commands for the shell should be inserted here
+    //insert new commands here
     len=0;
-
+    counter =0;
 
   }
-  printf("Close comandline");
+  printf("Close shell");
 }
 
