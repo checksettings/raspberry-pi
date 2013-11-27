@@ -19,20 +19,8 @@ void writeTextInBox(const char* text)  // only one Line (don't use newlines)
   putchar(0xC8); for(i=0; i<text_length; ++i) putchar(0xCD); putchar(0xBC); putchar('\n');
 }
 
-void test();
-void test1();
-
-fcn_ptr commands[MAXNUMBEROFFUNCTIONS] = {&test,&test1};
-char *commands_name[MAXNUMBEROFFUNCTIONS] = {"test","test1","\0"};
-//char *commands_name[MAXNUMBEROFFUNCTIONS] = {"test","test1"};
 void main(void)
 {
-   
-  printf("start test\n");
-  
- //   commands[0] = &test;
-  //  commands[1] = &test1;
-    
   //uint32_t fb_x = 640;
   //uint32_t fb_y = 480;
   //fbInit(fb_x, fb_y, COLORMODE_32BIT);
@@ -42,9 +30,6 @@ void main(void)
   //writeTextInBox("Welcome to Martins and Manuels Shell!!");
   printf("Welcome to Martins and Manuels Shell!!");
   
-
- 
-
 /*
   printf("start address of heap: %x\n", &_heap_start);
 
@@ -90,13 +75,3 @@ void main(void)
   //  uartPutc(uartGetc());
 
 }
-void test()
-{
-printf("HALLO ");
-} 
-void test1()
-{
-printf("zum ersten test\n");
-} 
-
-
