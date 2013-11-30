@@ -78,3 +78,6 @@ clean :
 
 run :
 	raspbootcom /dev/ttyUSB1 kernel.img
+
+run0 :
+	raspbootcom /dev/ttyUSB0 kernel.img
