@@ -28,8 +28,7 @@ void main(void)
   //fbInitNativ();
   uartInit();
   //writeTextInBox("Welcome to Martins and Manuels Shell!!");
-  printf("Welcome to Martins and Manuels Shell!!");
-  
+  printf("Welcome to Martins and Manuels Shell!! \n");
 /*
   printf("start address of heap: %x\n", &_heap_start);
 

@@ -6,6 +6,6 @@
 typedef void (*fcn_ptr)(void); 
 
 extern void shell(void);
-extern void addNewCommand(fcn_ptr function_pointer, char command_name[24]);
+extern void addNewCommand(fcn_ptr function_pointer, char command_name[24],char* help_text);
 
 #endif /* SHELL_H */
