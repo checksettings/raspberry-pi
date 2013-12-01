@@ -25,7 +25,7 @@ void main(void)
   //uint32_t fb_y = 480;
   //fbInit(fb_x, fb_y, COLORMODE_32BIT);
   //setStdOutput(OUTPUT_MONITOR);
-  //fbInitNativ();
+  fbInitNativ();
   uartInit();
   //writeTextInBox("Welcome to Martins and Manuels Shell!!");
   printf("Welcome to Martins and Manuels Shell!! \n");

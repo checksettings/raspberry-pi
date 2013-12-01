@@ -5,9 +5,6 @@
 #	A makefile script for generation of raspberry pi kernel images.
 ###############################################################################
 
-# make dependant on h-files
-DEPS = $(SOURCE)/include
-
 # The toolchain to use. arm-none-eabi works, but there does exist 
 # arm-bcm2708-linux-gnueabi.
 # make sure that the bin-folder is in the PATH-Variable!
@@ -20,6 +17,7 @@ BUILD = build/
 # The directory in which source files are stored.
 SOURCE = source/
 
+# make dependant on h-files
 INCLUDE = $(SOURCE)include/
 
 # The name of the output file to generate.
@@ -45,7 +43,7 @@ OBJECTS := $(patsubst $(SOURCE)%.s,$(BUILD)%.o,$(wildcard $(SOURCE)*.s)) $(patsu
 all: $(BUILD) $(TARGET) $(LIST)
 
 # Rule to remake everything. Does not include clean.
-rebuild: all
+rebuild: clean all 
 
 # Rule to make the listing file.
 $(LIST) : $(BUILD)output.elf

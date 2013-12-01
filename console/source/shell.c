@@ -43,9 +43,10 @@ void shell(void)
     if (strcmp(input,"exit") == 0){exit = 0;}
     else if(strcmp(input,"restart") == 0){ printf("restarting...\n");__asm__ ("b _start"); }
     else if(strcmp(input,"shutdown")== 0){ printf("shutdown...\n"); uartPuts("\x04\x04\x04");}
+    else if(strcmp(input,"load") == 0){ printf("load new kernel...\n");__asm__ ("ldr r1,=_jump_to_raspbootin \r\n ldr r0,[r1] \r\nblx r0");}
     else
     {
-      while(counter < MAXNUMBEROFFUNCTIONS){
+      while(counter < commandcounter){
         if(strcmp(input,allcommands[counter].command_name)==0)
         {
           allcommands[counter].command();
@@ -86,6 +87,7 @@ void helpOutput()
   printf("exit:\t\tclose the shell and returns to main.\n");
   printf("restart:\trestart the program at the mainfunction\n");
   printf("shutdown:\tclose the program and stop raspbootcom\n");
+  printf("load:\t\tstart raspbootin and reload the kernel\n");
   int i;
   for(i = 0; i < commandcounter; i ++)
   {

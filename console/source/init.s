@@ -9,6 +9,11 @@ font:
 fontsize:
   .int    fontsize - font
 
+@set address of kernel_main in raspbootin
+.global _jump_to_raspbootin 
+.balign 4
+_jump_to_raspbootin :
+  .word 0x02000068
 
 .section .init @defined in linker-file
 .global _start 
