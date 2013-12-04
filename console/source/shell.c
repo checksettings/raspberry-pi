@@ -28,7 +28,7 @@ void shell(void)
     if (strcmp(input,"exit\n") == 0){exit = 0;}
     else if(strcmp(input,"restart\n") == 0){ printf("restarting...\n");__asm__ ("b _start"); }
     else if(strcmp(input,"shutdown\n")== 0){ printf("shutdown...\n"); uartPuts("\x04\x04\x04");}
-    else if(strcmp(input,"i2c\n")== 0){ printf("i2c...\n"); i2cmain();}
+    else if(strcmp(input,"i2c\n")== 0){ printf("i2c...\n"); i2cmain();} 
     else
     {
       printf("this command is not implemented yet\n");
