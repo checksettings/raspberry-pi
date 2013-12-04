@@ -30,8 +30,8 @@ void cmps10Main()
   {
     // read measurement
     register_address = CMPS10_BEARING_REGISTER;
-    ret_val = i2cReadWithRegister(CMPS10_DEFAULT_ADDRESS, &register_address, 5, buffer);  
-	  printf("Bearing: %d, %d, Pitch: %d, Roll: %d\n",buffer[0], (buffer[1]<<8)+buffer[2], buffer[3], buffer[4]);
+    ret_val = i2cReadWithRegister(CMPS10_DEFAULT_ADDRESS, &register_address, 5, buffer);
+	  printf("Bearing: %d, %d, Pitch: %u, Roll: %u\n",buffer[0], (buffer[1]<<8)+buffer[2], (int)buffer[3], (int)buffer[4]);
 
     // wait some time
     delay(CMPS10_WAITING);
