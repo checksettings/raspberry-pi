@@ -45,6 +45,30 @@
 
 #define BCM2835_BSC_FIFO_SIZE   16 ///< BSC FIFO size
 
+// GPIO PINS
+#define GPIO_PIN_0        0
+#define GPIO_PIN_1        3
+#define GPIO_PIN_2        6
+#define GPIO_PIN_3        9
+#define GPIO_PIN_16       18
+
+// GPIO Usages
+#define GPIO_INPUT        0b000
+#define GPIO_OUTPUT       0b001
+#define GPIO_ALTERNATIVE0 0b100
+
+#define GPFSEL0_OFFS   0
+#define GPFSEL1_OFFS   4
+
+#define GPSET0_OFFS    28
+#define GPCLR0_OFFS    40
+#define GPIO_PIN_OFFS  16
+#define GPIO_FSEL_ADDR (BCM2835_PERI_BASE + 0x200000)
+
+// Additional Defines
+#define WAIT_DELAY      0x3F0000
+
+
 /// Specifies the reason codes for the bcm2835_i2c_write and bcm2835_i2c_read functions.
 typedef enum
 {

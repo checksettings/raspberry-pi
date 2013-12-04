@@ -3,7 +3,8 @@
 #include "stdio.h"
 #include "string.h"
 #include "i2cmain.h"
-
+#include "srf08.h"
+#include "cmps10.h"
 
 void shell(void)
 {
@@ -29,6 +30,8 @@ void shell(void)
     else if(strcmp(input,"restart\n") == 0){ printf("restarting...\n");__asm__ ("b _start"); }
     else if(strcmp(input,"shutdown\n")== 0){ printf("shutdown...\n"); uartPuts("\x04\x04\x04");}
     else if(strcmp(input,"i2c\n")== 0){ printf("i2c...\n"); i2cmain();} 
+    else if(strcmp(input,"srf08\n")== 0){ printf("srf08...\n"); srf08Main();}
+    else if(strcmp(input,"cmps10\n")== 0){ printf("cmps10...\n"); cmps10Main();} 
     else
     {
       printf("this command is not implemented yet\n");
