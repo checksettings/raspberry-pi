@@ -15,19 +15,29 @@ void writeTextInBox(const char* text)  // only one Line (don't use newlines)
   uint32_t text_length = strlen(text) + 2;
   int32_t i;
   putchar(0xC9); for(i=0; i<text_length; ++i) putchar(0xCD); putchar(0xBB); putchar('\n');
-  putchar(0xBA); putchar(' '); printf(text);  putchar(' '); putchar(0xBA); putchar('\n');         uartPutc('\n');
+  putchar(0xBA); putchar(' '); printf(text);  putchar(' '); putchar(0xBA); putchar('\n');
   putchar(0xC8); for(i=0; i<text_length; ++i) putchar(0xCD); putchar(0xBC); putchar('\n');
 }
 
 void main(void)
 {
+  uartInit();
+
   //uint32_t fb_x = 640;
   //uint32_t fb_y = 480;
   //fbInit(fb_x, fb_y, COLORMODE_32BIT);
   //setStdOutput(OUTPUT_MONITOR);
-  fbInitNativ();
-  uartInit();
-  //writeTextInBox("Welcome to Martins and Manuels Shell!!");
+  //fbInitNativ();
+
+  // change foreground/background color (example)
+  //rgb foreground = {.rgb_16.rgb = COLOR16_RED};
+  //rgb background = {.rgb_16.rgb = COLOR16_YELLOW};
+  //rgb foreground = {.rgb_ = COLOR32_RED};
+  //rgb background = {.rgb_ = COLOR32_YELLOW};
+  //consoleForegroundColor(foreground);
+  //consoleBackgroundColor(background);
+
+  writeTextInBox("Welcome to Martins and Manuels Shell!!");
   printf("Welcome to Martins and Manuels Shell!! \n");
 /*
   printf("start address of heap: %x\n", &_heap_start);

@@ -8,7 +8,7 @@ typedef struct
   fcn_ptr command;
   char command_name[24];
   char* help_text;
-}command_struct;
+} command_struct;
 
 command_struct allcommands[MAXNUMBEROFFUNCTIONS];
 int commandcounter = 0;
@@ -17,11 +17,10 @@ void helpOutput();
 
 void shell(void)
 {
-
   addNewCommand(helpOutput,"help",0);
   printf("Starting Shell!!\n");
-  
-  char* shell_prompt = "cmd>";
+
+  char* shell_prompt = "cmd> ";
   uint32_t exit = 1;
   int32_t len = 0;
   char input[64];
@@ -33,7 +32,7 @@ void shell(void)
     do
     {
       input[len] = uartGetc();
-      uartPutc(input[len]);
+      putchar(input[len]);
       if(input[len] == 0x7F){
         input[len] = 0;
         len -=2;
@@ -96,7 +95,7 @@ void helpOutput()
       printf("%s:\t\t%s\n",allcommands[i].command_name,allcommands[i].help_text);
     }
   }
-  
+
   printf("\n");
 } 
 
