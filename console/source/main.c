@@ -24,10 +24,10 @@ void main(void)
   //uint32_t fb_x = 640;
   //uint32_t fb_y = 480;
   //fbInit(fb_x, fb_y, COLORMODE_32BIT);
-  //setStdOutput(OUTPUT_MONITOR);
+  setStdOutput(OUTPUT_MONITOR);
   fbInitNativ();
   uartInit();
-  //writeTextInBox("Welcome to Martins and Manuels Shell!!");
+  writeTextInBox("Welcome to Martins and Manuels Shell!!");
   printf("Welcome to Martins and Manuels Shell!! \n");
 /*
   printf("start address of heap: %x\n", &_heap_start);

@@ -2,6 +2,7 @@
 #include "uart.h"
 #include "stdio.h"
 #include "string.h"
+#include "framebuffer.h"
 
 typedef struct 
 {
@@ -17,11 +18,11 @@ void helpOutput();
 
 void shell(void)
 {
-
-  addNewCommand(helpOutput,"help",0);
+  char* help_test = "print a helpoutput for all commands\n";
+  addNewCommand(helpOutput,"help",help_test);
   printf("Starting Shell!!\n");
   
-  char* shell_prompt = "cmd>";
+  char* shell_prompt = "cmd> ";
   uint32_t exit = 1;
   int32_t len = 0;
   char input[64];
@@ -33,7 +34,12 @@ void shell(void)
     do
     {
       input[len] = uartGetc();
+      
+#ifdef FRAMEBUFFER_H
+      consoleWriteChar(input[len]);
+#else
       uartPutc(input[len]);
+#endif
       if(input[len] == 0x7F){
         input[len] = 0;
         len -=2;
@@ -84,7 +90,7 @@ void helpOutput()
   printf("-----------------------------------------\n");
   printf("Helpfunction\n");
   printf("The following Commands are availabel now!\n");
-  printf("exit:\t\tclose the shell and returns to main.\n");
+  printf("exit:\t\tclose the shell and returns to main\n");
   printf("restart:\trestart the program at the mainfunction\n");
   printf("shutdown:\tclose the program and stop raspbootcom\n");
   printf("load:\t\tstart raspbootin and reload the kernel\n");

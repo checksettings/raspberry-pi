@@ -32,6 +32,12 @@ static uint32_t pitch;  // pitch -> bytes to get one pixel down on monitor
 static uint32_t max_chars_x, max_chars_y;
 static uint32_t color_mode;
 
+/* Current console text cursor position (ie. where the next character will
+ * be written
+ */
+static int32_t cursor_pos_x = 0;
+static int32_t cursor_pos_y = 0;
+
 /* Framebuffer initialisation failed. Can't display an error, so flashing
  * the OK LED will have to do
  */
@@ -50,6 +56,9 @@ void fbInitNativ(void)
 /* Initialise the framebuffer */
 void fbInit(uint32_t set_fb_x, uint32_t set_fb_y, uint32_t set_color_depth)
 {
+  
+  cursor_pos_x = 0;
+  cursor_pos_y = 0;
   uint32_t var;
   uint32_t count;
 
@@ -199,12 +208,6 @@ void fbInit(uint32_t set_fb_x, uint32_t set_fb_y, uint32_t set_color_depth)
   if(color_mode < 2 || color_mode > 4)
     fbFail(FBFAIL_INVALID_BIT_SIZE);
 }
-
-/* Current console text cursor position (ie. where the next character will
- * be written
- */
-static int32_t cursor_pos_x = 0;
-static int32_t cursor_pos_y = 0;
 
 /* Current fg/bg color, this initialization is correct vor all bit modes */
 static rgb rgb_foreground = {.rgb_ = COLOR32_WHITE};
