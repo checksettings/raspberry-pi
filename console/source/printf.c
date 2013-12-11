@@ -1,12 +1,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "stdarg.h"
-#include "framebuffer.h"  // can be removed if not needed -> output from printf always on uart
-#include "uart.h"
 
-
-/* Defines the used output (UART/Framebuffer) */
-static int32_t std_output = OUTPUT_UART;
 
 typedef struct c_string
 {
@@ -32,16 +27,6 @@ uint8_t const LEFT    = 16; /* left justified */
 uint8_t const SPECIAL = 32; /* 0x */
 uint8_t const LARGE   = 64; /* use 'ABCDEF' instead of 'abcdef' */
 
-
-void setStdOutput(int32_t std_out)
-{
-  std_output = std_out;
-}
-
-int32_t getStdOutput()
-{
-  return std_output;
-}
 
 int32_t atoi(const char* string)
 {
@@ -110,41 +95,41 @@ void writeNumber(c_string* output_string, uint32_t number, uint32_t base,
     type &= ~ZEROPAD;
     size = 0;  //no padding then
   }
-	if (base < 2 || base > 36)
-		return;
-	c = (type & ZEROPAD) ? '0' : ' ';
-	sign = 0;
-	if (type & SIGN) {
-		if (((int) number) < 0) {
-			sign = '-';
-			number = - (int32_t)number;
-		} else if (type & PLUS) {
-			sign = '+';
-		} else if (type & SPACE) {
-			sign = ' ';
-		}
-	}
-	i = 0;
-	if (number == 0)
-		tmp[i++]='0';
-	else while (number != 0)
+  if (base < 2 || base > 36)
+    return;
+  c = (type & ZEROPAD) ? '0' : ' ';
+  sign = 0;
+  if (type & SIGN) {
+    if (((int) number) < 0) {
+      sign = '-';
+      number = - (int32_t)number;
+    } else if (type & PLUS) {
+      sign = '+';
+    } else if (type & SPACE) {
+      sign = ' ';
+    }
+  }
+  i = 0;
+  if (number == 0)
+    tmp[i++]='0';
+  else while (number != 0)
   {
-		tmp[i++] = digits[number%base];
+    tmp[i++] = digits[number%base];
     number /= base;
   }
 
-	if (sign) {
+  if (sign) {
     tmp[i++] = sign;
   }
-	if (type & SPECIAL) {
+  if (type & SPECIAL) {
     precision = 0;
-		if (base==8) {
+    if (base==8) {
         tmp[i++] = '0';
-		} else if (base==16) {
+    } else if (base==16) {
         tmp[i++] = digits[33];
         tmp[i++] = '0';
       }
-	}
+  }
 
   if (precision > size)
     precision = size;
@@ -161,7 +146,7 @@ void writeNumber(c_string* output_string, uint32_t number, uint32_t base,
     ++output_string->length;
   }
 
-	while (i-- > 0)
+  while (i-- > 0)
   {
     *output_string->ptr++ = tmp[i];
     ++output_string->length;
@@ -295,7 +280,7 @@ int32_t printf(const char* format, ...)
         }
 
         //signed decimal
-		case 'd':
+        case 'd':
           writeNumber(&output_string,(uint32_t) va_arg(args,int32_t),10,width, 0, flag | SIGN);
           break;
 
@@ -326,7 +311,6 @@ int32_t printf(const char* format, ...)
           va_arg(args,void);
           break;
       }
-
     }
     else
     {
@@ -345,16 +329,8 @@ int32_t printf(const char* format, ...)
   uint32_t to_write = output_string.length;
   do
   {
-#ifdef FRAMEBUFFER_H
-    if(!std_output)
-      uartPutc(*string_ptr++);
-    else
-      consoleWriteChar(*string_ptr++);
-#else
-    uartPutc(*string_ptr++);
-#endif
+    putchar(*string_ptr++);
   } while(--to_write);
-
 
   return (int32_t) character_count;
 }
