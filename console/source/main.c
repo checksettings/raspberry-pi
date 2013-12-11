@@ -22,7 +22,8 @@ void writeTextInBox(const char* text)  // only one Line (don't use newlines)
 void main(void)
 {
   uartInit();
-
+  char* myhelp="this is mein main function";
+  addNewCommand(newcommandstoadd,"startmy",myhelp);
   //uint32_t fb_x = 640;
   //uint32_t fb_y = 480;
   //fbInit(fb_x, fb_y, COLORMODE_32BIT);
