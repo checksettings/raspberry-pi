@@ -58,6 +58,7 @@
 
 #define SRF08_WAITING                 0xF0000 // Time to wait between measurements 65 ms
 
-void srf08Main();
+uint32_t SRF08getDistance(void);
+uint32_t SRF08getVersion(void);
 
 #endif /* SRF08_H */

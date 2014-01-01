@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 // Basic
-#define mmio32(x)               (*(volatile uint32_t*) (x))
+#define mmio32_2(x)               (*(volatile uint32_t*) (x))
 
 #define BCM2835_PERI_BASE       0x20000000
 #define BCM2835_BSC0_BASE       (BCM2835_PERI_BASE + 0x205000)
@@ -66,7 +66,7 @@
 #define GPIO_FSEL_ADDR (BCM2835_PERI_BASE + 0x200000)
 
 // Additional Defines
-#define WAIT_DELAY      0x3F0000
+#define WAIT_DELAY_2      0x3F0000
 
 
 /// Specifies the reason codes for the bcm2835_i2c_write and bcm2835_i2c_read functions.

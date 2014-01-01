@@ -8,9 +8,11 @@
 #include "string.h"
 #include "shell.h"
 
+#include "i2c.h"
+#include "distanceAPI.h"
+
 #define WAIT_DELAY      0x7F0000
 
-extern void i2cmain();
 void writeTextInBox(const char* text)  // only one Line (don't use newlines)
 {
   uint32_t text_length = strlen(text) + 2;
@@ -20,18 +22,44 @@ void writeTextInBox(const char* text)  // only one Line (don't use newlines)
   putchar(0xC8); for(i=0; i<text_length; ++i) putchar(0xCD); putchar(0xBC); putchar('\n');
 }
 
+void initAPIs()
+{
+  i2cInit();
+  distanceInit();
+}
+
+void printSensorValues()
+{
+  printf("SRF08: %d\n",getDistance());
+}
+
+void printSensorVersions()
+{
+  printf("SRF08: %d\n",getVersion());
+}
+
 void main(void)
 {
   uartInit();
   char* myhelp="this is mein main function";
   addNewCommand(newcommandstoadd,"startmy",myhelp);
+
+  char* help_api_init = "init i2c and APIs";
+  addNewCommand(initAPIs,"i",help_api_init);
+
+  char* help_sensor_values = "get values";
+  addNewCommand(printSensorValues,"m",help_sensor_values);
+
+  char* help_sensor_versions = "get versions";
+  addNewCommand(printSensorVersions,"v",help_sensor_versions);
+
   //uint32_t fb_x = 640;
   //uint32_t fb_y = 480;
   //fbInit(fb_x, fb_y, COLORMODE_32BIT);
-  setStdOutput(OUTPUT_MONITOR);
+//  setStdOutput(OUTPUT_MONITOR);
   //fbInitNativ();
 
-  writeTextInBox("Welcome to Martins and Manuels Shell!!");
+//  writeTextInBox("Welcome to Martins and Manuels Shell!!");
   // change foreground/background color (example)
   //rgb foreground = {.rgb_16.rgb = COLOR16_RED};
   //rgb background = {.rgb_16.rgb = COLOR16_YELLOW};
@@ -40,7 +68,7 @@ void main(void)
   //consoleForegroundColor(foreground);
   //consoleBackgroundColor(background);
 
-  writeTextInBox("Welcome to Martins and Manuels Shell!!");
+//  writeTextInBox("Welcome to Martins and Manuels Shell!!");
   printf("Welcome to Martins and Manuels Shell!! \n");
 /*
   printf("start address of heap: %x\n", &_heap_start);
