@@ -5,7 +5,7 @@
 #define SRF08
 
 //magnetometerAPI
-//#define CMPS10
+#define CMPS10
 
 //acceleraterAPI
 

@@ -5,8 +5,8 @@
 
 extern void distanceInit(void);
 
-extern uint32_t getVersion(void);
-extern uint32_t getDistance(void);
+extern uint32_t disGetVersion(void);
+extern uint32_t disGetDistance(void);
 
 
 #endif	/* DISTANCEAPI_H */

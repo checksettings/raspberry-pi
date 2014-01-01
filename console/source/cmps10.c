@@ -9,6 +9,21 @@
 char buffer[MAX_LEN];
 char register_address;
 
+uint32_t CMPS10getBearing(void)
+{
+  register_address = CMPS10_BEARING_HIGH_REGISTER;
+  i2cReadWithRegister(CMPS10_DEFAULT_ADDRESS, &register_address, 2, buffer);
+  return (buffer[0]<<8)+buffer[1];
+}
+
+uint32_t CMPS10getVersion(void)
+{
+  register_address = CMPS10_VERSION_REGISTER;
+  i2cReadWithRegister(CMPS10_DEFAULT_ADDRESS, &register_address, 1, buffer); 
+  return buffer[0];
+}
+
+/*
 void cmps10Main()
 {
   uint32_t ret_val;
@@ -40,4 +55,4 @@ void cmps10Main()
   // won't be reached here 
 	printf("i2cmain end\n");
   i2cClose();
-}
+}*/

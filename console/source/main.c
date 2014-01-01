@@ -10,6 +10,7 @@
 
 #include "i2c.h"
 #include "distanceAPI.h"
+#include "magnetometerAPI.h"
 
 #define WAIT_DELAY      0x7F0000
 
@@ -26,16 +27,19 @@ void initAPIs()
 {
   i2cInit();
   distanceInit();
+  magnetometerInit();
 }
 
 void printSensorValues()
 {
-  printf("SRF08: %d\n",getDistance());
+  printf("SRF08:  %3d\n",disGetDistance());
+  printf("CMPS10: %3d\n",magGetBearing()/10);
 }
 
 void printSensorVersions()
 {
-  printf("SRF08: %d\n",getVersion());
+  printf("SRF08:  %d\n",disGetVersion());
+  printf("CMPS10: %d\n",magGetVersion());
 }
 
 void main(void)

@@ -30,6 +30,7 @@
 
 #define CMPS10_WAITING                       0xF0000
 
-void cmps10Main();
+uint32_t CMPS10getBearing(void);
+uint32_t CMPS10getVersion(void);
 
 #endif /* CMPS10_H */
