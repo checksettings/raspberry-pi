@@ -10,6 +10,7 @@
 
 #define WAIT_DELAY      0x7F0000
 
+extern void i2cmain();
 
 void writeTextInBox(const char* text)  // only one Line (don't use newlines)
 {
