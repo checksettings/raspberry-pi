@@ -1,6 +1,21 @@
 #include "stdio.h"
-#include "framebuffer.h"
+#include "uart.h"
+#include "framebuffer.h"  // can be removed if not needed -> all outputs always on uart
 
+
+/* Defines the used output (UART/Framebuffer) */
+static int32_t std_output = OUTPUT_UART;
+
+
+void setStdOutput(int32_t std_out)
+{
+  std_output = std_out;
+}
+
+int32_t getStdOutput()
+{
+  return std_output;
+}
 
 /**
  * Writes the given character to stdout.
@@ -13,7 +28,14 @@
 int32_t putchar(int32_t character)
 {
   uint8_t output_char = (uint8_t)character;
-  consoleWriteChar(output_char);
+#ifdef FRAMEBUFFER_H
+  if(!std_output)
+    uartPutc(output_char);
+  else
+    consoleWriteChar(output_char);
+#else
+  uartPutc(output_char);
+#endif
   return (int32_t)output_char;
 }
 
@@ -30,7 +52,14 @@ int32_t puts(const char* output_string)
 
   while(output_string && *output_string)
   {
-    consoleWriteChar(*output_string++);
+#ifdef FRAMEBUFFER_H
+    if(!std_output)
+      uartPutc(*output_string++);
+    else
+      consoleWriteChar(*output_string++);
+#else
+    uartPutc(*output_string++);
+#endif
     ++string_length;
   }
 

@@ -15,16 +15,13 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "stdlib.h"
-#include "uart.h"
-//#include "stdio.h"  // needed for puts (monitor output)
+#include "stdio.h"
 
 #define MEM_CORRUPT -1
 #define DOUBLE_FREE -2
 #define INVALLID_FREE -3
 
-#define WRITE_ERROR(x) uartPuts(x)
-//#define WRITE_ERROR(x) puts(x)  // use this define if you have initialized the
-                                // framebuffer and want the error outputs there
+#define WRITE_ERROR(x) puts(x)
 
 static const char* MEM_CORRUPT_OUTPUT   = "ERROR: memory corruption!!!\n";
 static const char* DOUBLE_FREE_OUTPUT   = "ERROR: double free!!!\n";

@@ -73,9 +73,3 @@ clean :
 	-rm -f $(TARGET)
 	-rm -f $(LIST)
 	-rm -f $(MAP)
-
-run :
-	raspbootcom /dev/ttyUSB1 kernel.img
-
-run0 :
-	raspbootcom /dev/ttyUSB0 kernel.img
