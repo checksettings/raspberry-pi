@@ -1,0 +1,80 @@
+#ifndef BMP085_H
+#define BMP085_H
+
+#define BMP085_DEFAULT_ADDRESS 0xEE
+
+#define BMP085_REG_AC1_MSB 0xAA
+#define BMP085_REG_AC1_LSB 0xAB
+#define BMP085_REG_AC2_MSB 0xAC
+#define BMP085_REG_AC2_LSB 0xAD
+#define BMP085_REG_AC3_MSB 0xAE
+#define BMP085_REG_AC3_LSB 0xAF
+#define BMP085_REG_AC4_MSB 0xB0
+#define BMP085_REG_AC4_LSB 0xB1
+#define BMP085_REG_AC5_MSB 0xB2
+#define BMP085_REG_AC5_LSB 0xB3
+#define BMP085_REG_AC6_MSB 0xB4
+#define BMP085_REG_AC6_LSB 0xB5
+#define BMP085_REG_B1_MSB 0xB6
+#define BMP085_REG_B1_LSB 0xB7
+#define BMP085_REG_B2_MSB 0xB8
+#define BMP085_REG_B2_LSB 0xB9
+#define BMP085_REG_MB_MSB 0xBA
+#define BMP085_REG_MB_LSB 0xBB
+#define BMP085_REG_MC_MSB 0xBC
+#define BMP085_REG_MC_LSB 0xBD
+#define BMP085_REG_MD_MSB 0xBE
+#define BMP085_REG_MD_LSB 0xBF
+
+#define BMP085_REG_CHIPID  0xD0
+#define BMP085_REG_VERSION 0xD1
+
+#define BMP085_REG_COMMAND 0xF4
+#define BMP085_REG_RESULT_MSB 0xF6
+#define BMP085_REG_RESULT_LSB 0xF7
+#define BMP085_REG_RESULT_XLSB 0xF8
+
+#define BMP085_COMMAND_REQUEST_UT 0x2E
+#define BMP085_COMMAND_REQUEST_UP(mode) 0x34+(mode<<6)
+
+#define BMP085_TIME_TEMPERATURE 4500
+#define BMP085_MODE_ULTRALOWPOWER 0
+#define BMP085_TIME_ULTRALOWPOWER 4500
+#define BMP085_MODE_NORMAL 1
+#define BMP085_TIME_NORMAL 7500
+#define BMP085_MODE_HIGHRES 2
+#define BMP085_TIME_HIGHRES 13500
+#define BMP085_MODE_ULTRAHIGHRES 3
+#define BMP085_TIME_ULTRAHIGHRES 25500
+
+#define BMP085_MIN_TEMP -400
+#define BMP085_MAX_TEMP 850
+#define BMP085_LIMIT_TEMP(value) (((value) > (BMP085_MIN_TEMP)) ? ((((value) < (BMP085_MAX_TEMP)) ? (value) : (BMP085_MAX_TEMP))) : (BMP085_MIN_TEMP))
+
+#define BMP085_WAITING 0xFFFFF //4.5 ms
+
+struct bmp085calibration
+{
+  int16_t  AC1;
+  int16_t  AC2;
+  int16_t  AC3;
+  uint16_t AC4;
+  uint16_t AC5;
+  uint16_t AC6;
+  int16_t  B1;
+  int16_t  B2;
+  int16_t  MB;
+  int16_t  MC;
+  int16_t  MD;
+};
+
+uint32_t BMP085getVersion(void);
+
+void BMP085init();
+
+uint32_t BMP085getAltitude();
+//uint32_t BMP085getTemperature();
+//uint32_t BMP085getAltitude();
+
+#endif /* BMP085_H */
+

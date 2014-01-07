@@ -12,6 +12,7 @@
 //gyroAPI
 
 //positionAPI
+#define BMP085
 
 
 
