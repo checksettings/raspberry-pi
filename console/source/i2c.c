@@ -3,7 +3,7 @@
 
 // By default I2C code is generated for the V2 RPi 
 // which has SDA1 and SCL1 connected.
-#define I2C_V1
+//#define I2C_V1
 
 #ifdef I2C_V1
   #define BCM2835_BSC_BASE BCM2835_BSC0_BASE

@@ -5,7 +5,7 @@
 
 extern void distanceInit(void);
 
-extern uint32_t getVersion(void);
+extern uint32_t getDistVersion(void);
 extern uint32_t getDistance(void);
 
 

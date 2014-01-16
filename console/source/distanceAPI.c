@@ -5,17 +5,17 @@
 
 #include "srf08.h"
 
-uint32_t (*getVersionPtr)();
+uint32_t (*getDistVersionPtr)();
 uint32_t (*getDistancePtr)();
 
 void distanceInit(void)
 {
   printf("distanceInit\n");
-  getVersionPtr = 0;
+  getDistVersionPtr = 0;
   getDistancePtr = 0;
   #ifdef SRF08
     printf("- SRF08\n");
-    getVersionPtr = &SRF08getVersion;
+    getDistVersionPtr = &SRF08getVersion;
     getDistancePtr = &SRF08getDistance;
   #endif
 }
@@ -27,9 +27,9 @@ uint32_t getDistance(void)
   return -1U;
 }
 
-uint32_t getVersion(void)
+uint32_t getDistVersion(void)
 {
-  if (getVersionPtr != 0)
-    return (*getVersionPtr)();
+  if (getDistVersionPtr != 0)
+    return (*getDistVersionPtr)();
   return -1U;
 }

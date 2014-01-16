@@ -11,6 +11,7 @@ char register_address;
 
 void cmps10Main()
 {
+
   uint32_t ret_val;
   buffer[0] = 0xFF;
 	printf("i2cmain start\n");
@@ -40,4 +41,5 @@ void cmps10Main()
   // won't be reached here 
 	printf("i2cmain end\n");
   i2cClose();
+
 }
