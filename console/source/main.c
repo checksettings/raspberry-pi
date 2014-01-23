@@ -9,6 +9,7 @@
 #include "shell.h"
 
 #include "i2c.h"
+#include "sensorconfig.h"
 #include "distanceAPI.h"
 #include "directionAPI.h"
 #include "motionAPI.h"
@@ -30,30 +31,53 @@ void initAPIs()
   distanceInit();
   directionInit();
   motionInit();
+#ifdef MAG3110
+	getDirInit();
+#endif
+#ifdef MMA8452Q
+	getMotInit();
+#endif
 }
 
 void printSensorValues()
 {
-  uint16_t direction[3];
-  uint16_t motion[3];
+#ifdef SRF08
   printf("SRF08:  %3d\n",getDistance());
+#endif
+#ifdef CMPS10
   printf("CMPS10: %3d\n",getBearing()/10);
+#endif
+#ifdef MAG3110
+  uint16_t direction[3];
   getDirection(direction);
   printf("Measured Direction: x [ %d ] y [ %d ] z [ %d ]\n",direction[0],direction[1],direction[2]);
+#endif
+#ifdef MMA8452Q
+  uint16_t motion[3];
   getMotion(motion);
   printf("Measured Motion: x [ %d ] y [ %d ] z [ %d ]\n",motion[0],motion[1],motion[2]);
+#endif
 }
 
 void printSensorVersions()
 {
+#ifdef SRF08
   printf("SRF08:  %d\n",getDistVersion());
+#endif
+#ifdef CMPS10
   printf("CMPS10: %d\n",getDirVersion());
+#endif
+#ifdef MAG3110
   printf("MAG3110: %d\n",getDirVersion());
+#endif
+#ifdef MMA8452Q
   printf("MMA8452Q: %d\n",getMotVersion());
+#endif
 }
 
 void magnetometer()
 {
+#ifdef MAG3110
 	int count = 100;
   i2cInit();
 	directionInit();
@@ -69,10 +93,14 @@ void magnetometer()
 		getDirection(direction);
 		printf("Measured Direction: x [ %d ] y [ %d ] z [ %d ], Temp: %d \n",direction[0],direction[1],direction[2],getTemperature());
 	}
+#else
+  printf("MAG3110 is not included!\n");
+#endif
 }
 
 void accelerometer()
 {
+#ifdef MMA8452Q
 	int count = 100;
   i2cInit();
 	motionInit();
@@ -87,8 +115,10 @@ void accelerometer()
 		motion[2] = 0;
 		getMotion(motion);
 		printf("Measured Motion: x [ %d ] y [ %d ] z [ %d ]\n",motion[0],motion[1],motion[2]);
-		//printf("Measured Motion: x: %d \n",motion[0]);
 	}
+#else
+  printf("MMA8452Q is not included!\n");
+#endif
 }
 
 void main(void)

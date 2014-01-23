@@ -2,7 +2,6 @@
 #include "sensorconfig.h"
 
 #include "stdio.h"
-
 #include "mma8452q.h"
 
 uint32_t (*getMotInitPtr)();

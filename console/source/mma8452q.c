@@ -16,7 +16,7 @@ uint32_t MMA8452QgetInit(void)
 	// INIT Accelerometer MMA8452Q
   // Setup mode configuration
   buffer[0] = MMA8452Q_CTRL_REG_1; 
-  buffer[1] = (0 << 6) | (0 << 4) | (0 << 2) | (1 << 1) | (1 << 0);
+  buffer[1] = (1 << 7) | (1 << 6) | (0 << 4) | (0 << 2) | (1 << 1) | (1 << 0);
               // Sleep rate 50 Hz
               // Data rate 800 Hz
               // No reduced noise mode
@@ -60,7 +60,8 @@ uint32_t MMA8452QgetInit(void)
 		printf("return: %x\n",ret_val);
 		return ret_val;
   }
-	
+
+  printf("MMA8452Q initialised!\n");
 	return 0;
 }
 
@@ -68,8 +69,7 @@ uint32_t MMA8452QgetVersion(void)
 {
   buffer[0] = 0xFF;
   register_address = MMA8452Q_WHO_AM_I;
-	i2cRead(MMA8452Q_DEFAULT_ADDRESS, 12, buffer);
-  //i2cReadWithRegister(MMA8452Q_DEFAULT_ADDRESS, &register_address, 1, buffer);
+  i2cReadWithRegister(MMA8452Q_DEFAULT_ADDRESS, &register_address, 1, buffer);
   return buffer[11];
 }
 
@@ -79,14 +79,9 @@ uint32_t MMA8452QgetMotion(uint16_t* motions)
   uint8_t y = 0;
   uint8_t z = 0;
 
-	//i2cSetSlaveAddress(MMA8452Q_DEFAULT_ADDRESS);
 	buffer[0] = 0x00;
 	register_address = MMA8452Q_OUT_X_MSB;
-	//i2cRead(MMA8452Q_DEFAULT_ADDRESS, 4, buffer);
-	//i2cReadWithRegister(MMA8452Q_DEFAULT_ADDRESS, &register_address, 4, buffer);
-	//i2cWrite(MMA8452Q_DEFAULT_ADDRESS, 1, buffer);
 	i2cReadWithRegisterRS(MMA8452Q_DEFAULT_ADDRESS, &register_address, 4, buffer);
-  //i2cRead(MMA8452Q_DEFAULT_ADDRESS, 4, buffer);
 
   *((uint8_t*)&x) = buffer[1];
   *((uint8_t*)&y) = buffer[2];

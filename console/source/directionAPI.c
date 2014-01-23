@@ -24,7 +24,6 @@ void directionInit(void)
     printf("- CMPS10\n");
     getDirVersionPtr = &CMPS10getVersion;
     getBearingPtr = &CMPS10getBearing;
-
   #else
   #ifdef MAG3110
     printf("- MAG3110\n");
