@@ -10,6 +10,7 @@
 
 #include "i2c.h"
 #include "sensorconfig.h"
+#include "actorconfig.h"
 #include "distanceAPI.h"
 #include "directionAPI.h"
 #include "motionAPI.h"
@@ -104,11 +105,22 @@ void magnetometer()
 void startMotor()
 {
   int i = 0;
-  for(i = 0;i < 2000;i++)
+  for(i = 0;i < 30;i++)
   {
-    printf("set motor speed %d\n",   setMotorSpeed(20));
-    delay(0xF0000);
+    setMotorSpeed(30);
+    delay(0x70000);
   }
+  for(i = 0;i < 30;i++)
+  {
+    setMotorSpeed(100);
+    delay(0x70000);
+  }
+  for(i = 0;i < 30;i++)
+  {
+    setMotorSpeed(255);
+    delay(0x70000);
+  }
+
 }
 
 void accelerometer()

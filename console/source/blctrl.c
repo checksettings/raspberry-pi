@@ -18,24 +18,4 @@ uint32_t BLCTRLsetMotorSpeed(uint32_t value)
 
   return value;
 }
-/*
-uint32_t SRF08getDistance(void)
-{
-  register_address = SRF08_VERSION_REGISTER;
-  buffer[0] = SRF08_COMMAND_REGISTER;
-  buffer[1] = SRF08_MEASURE_CM;
-  i2cWrite(SRF08_DEFAULT_ADDRESS, 2, buffer);
 
-  // wait some time
-  delay(SRF08_WAITING);
-
-  buffer[0] = 0xFF;
-  buffer[1] = 0xFF;
-  register_address = SRF08_DISTANCE_HIGH_REGISTER;
-
-  i2cReadWithRegister(SRF08_DEFAULT_ADDRESS, &register_address, 2, buffer);
-
-  return (buffer[0]<<8)+buffer[1];
-}
-
-*/
