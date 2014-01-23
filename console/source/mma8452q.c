@@ -75,24 +75,28 @@ uint32_t MMA8452QgetVersion(void)
 
 uint32_t MMA8452QgetMotion(uint16_t* motions)
 {
-  int8_t x = 0;
-  int8_t y = 0;
-  int8_t z = 0;
+  uint8_t x = 0;
+  uint8_t y = 0;
+  uint8_t z = 0;
 
-	buffer[0] = 0xFF;
+	i2cSetSlaveAddress(MMA8452Q_DEFAULT_ADDRESS);
+	buffer[0] = 0x00;
 	register_address = MMA8452Q_OUT_X_MSB;
-	i2cRead(MMA8452Q_DEFAULT_ADDRESS, 4, buffer);
+	//i2cRead(MMA8452Q_DEFAULT_ADDRESS, 4, buffer);
 	//i2cReadWithRegister(MMA8452Q_DEFAULT_ADDRESS, &register_address, 4, buffer);
+	i2cWrite(MMA8452Q_DEFAULT_ADDRESS, 1, buffer);
+	i2cReadWithRegisterRS(MMA8452Q_DEFAULT_ADDRESS, &register_address, 4, buffer);
+  //i2cRead(MMA8452Q_DEFAULT_ADDRESS, 4, buffer);
 
   *((uint8_t*)&x) = buffer[1];
   *((uint8_t*)&y) = buffer[2];
   *((uint8_t*)&z) = buffer[3];
 
   // Convert to Gs wrong normalized, should be true = x / 1000
-  if (motions != 0) {
-      motions[0] = x * gCount;
-      motions[1] = y * gCount;
-      motions[2] = z * gCount;
+	if (motions != 0) {
+      motions[0] = x;// * gCount;
+      motions[1] = y;// * gCount;
+      motions[2] = z;// * gCount;
   }
 
 	return 0;

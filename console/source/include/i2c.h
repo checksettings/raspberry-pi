@@ -84,7 +84,9 @@ extern void i2cInit(void);
 
 extern void i2cInit(void);
 extern void i2cClose(void);
+extern void i2cSetSlaveAddress(uint8_t address);
 extern uint8_t i2cRead(uint8_t address, uint32_t bytes, char *data);
+extern uint8_t i2cReadWithRegisterRS(uint8_t address, const char *reg_address, uint32_t bytes, char *data);
 extern uint8_t i2cReadWithRegister(uint8_t address, const char *reg_address, uint32_t bytes, char *data);
 extern uint8_t i2cWrite(uint8_t address, uint32_t bytes, const char *data);
 

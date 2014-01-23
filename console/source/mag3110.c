@@ -34,6 +34,7 @@ uint32_t MAG3110getInit(void)
               // Disable fast read
               // Continuous measurement
               // Active mode
+
 	ret_val = i2cWrite(MAG3110_DEFAULT_ADDRESS, 2, buffer);
   if (ret_val != 0) {
   	printf("Failed sending CTRL_REG1!\n");
@@ -58,15 +59,19 @@ uint32_t MAG3110getDirection(uint16_t* directions)
   int16_t y = 0;
   int16_t z = 0;
 
-	buffer[0] = 0xFF;
-	register_address = MAG3110_OUT_X_MSB;
-	//i2cRead(MAG3110_DEFAULT_ADDRESS, 18, buffer);
-	i2cReadWithRegister(MAG3110_DEFAULT_ADDRESS, &register_address, 7, buffer);
+	i2cSetSlaveAddress(MAG3110_DEFAULT_ADDRESS);
+	buffer[0] = 0x00;
+	//register_address = MAG3110_OUT_X_MSB;
 
-  *((uint16_t*)&x) = ((uint16_t)buffer[0] << 8) | (uint16_t)buffer[1];
-  *((uint16_t*)&y) = ((uint16_t)buffer[2] << 8) | (uint16_t)buffer[3];
-  *((uint16_t*)&z) = ((uint16_t)buffer[4] << 8) | (uint16_t)buffer[5];
-  
+	//i2cReadWithRegister(, &register_address, 7, buffer);
+	i2cWrite(MAG3110_DEFAULT_ADDRESS, 1, buffer);
+  i2cRead(MAG3110_DEFAULT_ADDRESS, 18, buffer);
+	//i2cReadWithRegisterRS(MAG3110_DEFAULT_ADDRESS,&register_address, 18, buffer);
+
+  *((uint16_t*)&x) = ((uint16_t)buffer[1] << 8) | (uint16_t)buffer[2];
+  *((uint16_t*)&y) = ((uint16_t)buffer[3] << 8) | (uint16_t)buffer[4];
+  *((uint16_t*)&z) = ((uint16_t)buffer[5] << 8) | (uint16_t)buffer[6];
+
   if (directions != 0) {
       directions[0] = x;
       directions[1] = y;
