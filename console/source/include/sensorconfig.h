@@ -6,10 +6,10 @@
 
 //directionAPI
 #define CMPS10
-#define MAG3110
+//#define MAG3110
 
 //motionAPI
-#define MMA8452Q
+//#define MMA8452Q
 
 //gyroAPI
 

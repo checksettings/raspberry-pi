@@ -9,5 +9,6 @@ extern uint32_t getDirVersion(void);
 extern uint32_t getDirection(uint16_t* directions);
 extern uint32_t getTemperature(void);
 extern uint32_t getDirInit(void);
+extern uint32_t getBearing(void);
 
 #endif	/* DIRECTIONAPI_H */

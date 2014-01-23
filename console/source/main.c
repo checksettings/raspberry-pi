@@ -36,8 +36,8 @@ void printSensorValues()
 {
   uint16_t direction[3];
   uint16_t motion[3];
-  printf("SRF08:  %3d\n",disGetDistance());
-  printf("CMPS10: %3d\n",magGetBearing()/10);
+  printf("SRF08:  %3d\n",getDistance());
+  printf("CMPS10: %3d\n",getBearing()/10);
   getDirection(direction);
   printf("Measured Direction: x [ %d ] y [ %d ] z [ %d ]\n",direction[0],direction[1],direction[2]);
   getMotion(motion);
@@ -46,8 +46,8 @@ void printSensorValues()
 
 void printSensorVersions()
 {
-  printf("SRF08:  %d\n",disGetVersion());
-  printf("CMPS10: %d\n",magGetVersion());
+  printf("SRF08:  %d\n",getDistVersion());
+  printf("CMPS10: %d\n",getDirVersion());
   printf("MAG3110: %d\n",getDirVersion());
   printf("MMA8452Q: %d\n",getMotVersion());
 }
