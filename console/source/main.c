@@ -14,6 +14,8 @@
 #include "directionAPI.h"
 #include "motionAPI.h"
 
+#include "motorAPI.h"
+
 #define WAIT_DELAY      0x7F0000
 
 void writeTextInBox(const char* text)  // only one Line (don't use newlines)
@@ -31,6 +33,7 @@ void initAPIs()
   distanceInit();
   directionInit();
   motionInit();
+  motorInit();
 #ifdef MAG3110
 	getDirInit();
 #endif
@@ -98,6 +101,16 @@ void magnetometer()
 #endif
 }
 
+void startMotor()
+{
+  int i = 0;
+  for(i = 0;i < 2000;i++)
+  {
+    printf("set motor speed %d\n",   setMotorSpeed(20));
+    delay(0xF0000);
+  }
+}
+
 void accelerometer()
 {
 #ifdef MMA8452Q
@@ -141,6 +154,9 @@ void main(void)
 
   char* help_sensor_acc = "get accelerometer values";
   addNewCommand(accelerometer,"acc",help_sensor_acc);
+
+  char* help_actor_motor = "start motor";
+  addNewCommand(startMotor,"blctrl",help_actor_motor);
 
   //uint32_t fb_x = 640;
   //uint32_t fb_y = 480;
