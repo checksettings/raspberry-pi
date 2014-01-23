@@ -57,7 +57,7 @@ void magnetometer()
 	directionInit();
 	getDirInit();
   printf("MAG3110: %d\n",getDirVersion());
-	while(1)//(count > 5)
+	while(count > 1)
 	{
 		count--;
 		uint16_t direction[3];
@@ -76,7 +76,7 @@ void accelerometer()
 	motionInit();
 	getMotInit();
   printf("MMA8452Q: %d\n",getMotVersion());
-	while(1)//(count > 5)
+	while(count > 1)
 	{
 		count--;
 		uint16_t motion[3];

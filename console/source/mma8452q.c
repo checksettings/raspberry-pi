@@ -79,12 +79,12 @@ uint32_t MMA8452QgetMotion(uint16_t* motions)
   uint8_t y = 0;
   uint8_t z = 0;
 
-	i2cSetSlaveAddress(MMA8452Q_DEFAULT_ADDRESS);
+	//i2cSetSlaveAddress(MMA8452Q_DEFAULT_ADDRESS);
 	buffer[0] = 0x00;
 	register_address = MMA8452Q_OUT_X_MSB;
 	//i2cRead(MMA8452Q_DEFAULT_ADDRESS, 4, buffer);
 	//i2cReadWithRegister(MMA8452Q_DEFAULT_ADDRESS, &register_address, 4, buffer);
-	i2cWrite(MMA8452Q_DEFAULT_ADDRESS, 1, buffer);
+	//i2cWrite(MMA8452Q_DEFAULT_ADDRESS, 1, buffer);
 	i2cReadWithRegisterRS(MMA8452Q_DEFAULT_ADDRESS, &register_address, 4, buffer);
   //i2cRead(MMA8452Q_DEFAULT_ADDRESS, 4, buffer);
 

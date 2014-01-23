@@ -64,9 +64,9 @@ uint32_t MAG3110getDirection(uint16_t* directions)
 	//register_address = MAG3110_OUT_X_MSB;
 
 	//i2cReadWithRegister(, &register_address, 7, buffer);
-	i2cWrite(MAG3110_DEFAULT_ADDRESS, 1, buffer);
-  i2cRead(MAG3110_DEFAULT_ADDRESS, 18, buffer);
-	//i2cReadWithRegisterRS(MAG3110_DEFAULT_ADDRESS,&register_address, 18, buffer);
+	//i2cWrite(MAG3110_DEFAULT_ADDRESS, 1, buffer);
+  //i2cRead(MAG3110_DEFAULT_ADDRESS, 18, buffer);
+	i2cReadWithRegister(MAG3110_DEFAULT_ADDRESS,&register_address, 7, buffer);
 
   *((uint16_t*)&x) = ((uint16_t)buffer[1] << 8) | (uint16_t)buffer[2];
   *((uint16_t*)&y) = ((uint16_t)buffer[3] << 8) | (uint16_t)buffer[4];
