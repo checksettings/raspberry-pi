@@ -4,16 +4,15 @@
 //distanceAPI
 #define SRF08
 
-//magnetometerAPI
+//directionAPI
 #define CMPS10
+#define MAG3110
 
-//acceleraterAPI
+//motionAPI
+#define MMA8452Q
 
 //gyroAPI
 
 //positionAPI
-
-
-
 
 #endif	/* SENSORCONFIG_H */

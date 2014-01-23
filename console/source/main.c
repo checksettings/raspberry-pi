@@ -10,7 +10,8 @@
 
 #include "i2c.h"
 #include "distanceAPI.h"
-#include "magnetometerAPI.h"
+#include "directionAPI.h"
+#include "motionAPI.h"
 
 #define WAIT_DELAY      0x7F0000
 
@@ -27,19 +28,67 @@ void initAPIs()
 {
   i2cInit();
   distanceInit();
-  magnetometerInit();
+  directionInit();
+  motionInit();
 }
 
 void printSensorValues()
 {
+  uint16_t direction[3];
+  uint16_t motion[3];
   printf("SRF08:  %3d\n",disGetDistance());
   printf("CMPS10: %3d\n",magGetBearing()/10);
+  getDirection(direction);
+  printf("Measured Direction: x [ %d ] y [ %d ] z [ %d ]\n",direction[0],direction[1],direction[2]);
+  getMotion(motion);
+  printf("Measured Motion: x [ %d ] y [ %d ] z [ %d ]\n",motion[0],motion[1],motion[2]);
 }
 
 void printSensorVersions()
 {
   printf("SRF08:  %d\n",disGetVersion());
   printf("CMPS10: %d\n",magGetVersion());
+  printf("MAG3110: %d\n",getDirVersion());
+  printf("MMA8452Q: %d\n",getMotVersion());
+}
+
+void magnetometer()
+{
+	int count = 100;
+  i2cInit();
+	directionInit();
+	getDirInit();
+  printf("MAG3110: %d\n",getDirVersion());
+	while(count > 1)
+	{
+		count--;
+		uint16_t direction[3];
+		direction[0] = 0;
+		direction[1] = 0;
+		direction[2] = 0;
+		getDirection(direction);
+		printf("Measured Direction: x [ %d ] y [ %d ] z [ %d ], Temp: %d \n",direction[0],direction[1],direction[2],getTemperature());
+	}
+}
+
+void accelerometer()
+{
+	int count = 100;
+  i2cInit();
+	motionInit();
+	getMotInit();
+  printf("MMA8452Q: %d\n",getMotVersion());
+	while(count > 1)
+	{
+		count--;
+		uint16_t motion[3];
+		motion[0] = 0;
+		motion[1] = 0;
+		motion[2] = 0;
+		getMotion(motion);
+		printf("Measured Motion: x [ %d ] y [ %d ] z [ %d ]\n",motion[0],motion[1],motion[2]);
+		//printf("Measured Motion: x: %d \n",motion[0]);
+	}
 }
 
 void main(void)
@@ -56,6 +105,12 @@ void main(void)
 
   char* help_sensor_versions = "get versions";
   addNewCommand(printSensorVersions,"v",help_sensor_versions);
+
+  char* help_sensor_mag = "get magnetometer values";
+  addNewCommand(magnetometer,"mag",help_sensor_mag);
+
+  char* help_sensor_acc = "get accelerometer values";
+  addNewCommand(accelerometer,"acc",help_sensor_acc);
 
   //uint32_t fb_x = 640;
   //uint32_t fb_y = 480;

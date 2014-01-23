@@ -3,7 +3,7 @@
 
 // By default I2C code is generated for the V2 RPi 
 // which has SDA1 and SCL1 connected.
-#define I2C_V1
+//#define I2C_V1
 
 #ifdef I2C_V1
   #define BCM2835_BSC_BASE BCM2835_BSC0_BASE
@@ -75,6 +75,23 @@ void i2cClose(void)
   
   delay_with_loop(WAIT_DELAY_2);
   setLEDOff();
+}
+
+
+extern void i2cSetSlaveAddress(uint8_t address)
+{
+  // Set Address
+  mmio32_2(BCM2835_BSC_BASE+BCM2835_BSC_A) = (address >> 1);
+
+	// Set I2C Device Address
+/*
+#ifdef I2C_V1
+	volatile uint32_t* paddr = bcm2835_bsc0 + BCM2835_BSC_A/4;
+#else	
+	volatile uint32_t* paddr = bcm2835_bsc1 + BCM2835_BSC_A/4;
+#endif
+	bcm2835_peri_write(paddr, addr);
+*/
 }
 
 
@@ -295,5 +312,93 @@ uint8_t i2cWrite(uint8_t address, uint32_t bytes, const char *data)
 
   mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_C) = (BCM2835_BSC_S_DONE);
   return reason;
+}
+
+uint8_t i2cReadWithRegisterRS(uint8_t address, const char *reg_address, uint32_t bytes, char *data)
+{   
+	uint32_t remaining = bytes;
+  uint32_t i = 0;
+  uint8_t reason = BCM2835_I2C_REASON_OK;
+  
+	// Set Address
+	mmio32_2(BCM2835_BSC_BASE+BCM2835_BSC_A) = (address >> 1);
+
+  // Clear FIFO
+	mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_C) = (BCM2835_BSC_C_CLEAR_1);
+    
+  // Clear Status
+  mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_S) = (BCM2835_BSC_S_CLKT | 
+                                              BCM2835_BSC_S_ERR  | 
+                                              BCM2835_BSC_S_DONE);
+
+  // Set Data Length
+  mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_DLEN) = 1; //(bytes); HERE WAS 1
+
+  // Enable device and start transfer
+  mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_C) = (BCM2835_BSC_C_I2CEN);
+  mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_FIFO) = (reg_address[0]);
+  mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_C) = (BCM2835_BSC_C_I2CEN | 
+                                                BCM2835_BSC_C_ST);
+
+    
+  // poll for transfer has started
+  while ( !((mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_S)) & BCM2835_BSC_S_TA ) )
+  {
+    if((mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_S)) & BCM2835_BSC_S_DONE)
+      break;
+  }
+    
+  // Send a repeated start with read bit set in address
+  mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_DLEN) = bytes;
+  mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_C) = (BCM2835_BSC_C_I2CEN | 
+                                              BCM2835_BSC_C_ST    |
+                                              BCM2835_BSC_C_READ);
+    
+  // Wait for write to complete and first byte back
+  delay_with_loop(0xFFFF);
+    
+  // wait for transfer to complete
+  while (!((mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_S)) & BCM2835_BSC_S_DONE))
+  {
+    // we must empty the FIFO as it is populated and not use any delay
+    while (mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_S) & BCM2835_BSC_S_RXD)
+  	{
+      // Read from FIFO
+      data[i] = mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_FIFO);
+      i++;
+      remaining--;
+  	}
+  }
+    
+  // transfer has finished - grab any remaining stuff in FIFO
+  while (remaining && (mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_S) & BCM2835_BSC_S_RXD))
+  {
+    // Read from FIFO
+    data[i] = mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_FIFO);
+    i++;
+    remaining--;
+  }
+    
+  // Received a NACK
+  if (mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_FIFO) & BCM2835_BSC_S_ERR)
+  {
+    reason = BCM2835_I2C_REASON_ERROR_NACK;
+  }
+
+  // Received Clock Stretch Timeout
+  else if (mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_FIFO) & BCM2835_BSC_S_CLKT)
+  {
+    reason = BCM2835_I2C_REASON_ERROR_CLKT;
+  }
+
+  // Not all data is received
+  else if (remaining)
+  {
+    reason = BCM2835_I2C_REASON_ERROR_DATA;
+  }
+
+  mmio32_2(BCM2835_BSC_BASE + BCM2835_BSC_C) = (BCM2835_BSC_S_DONE);
+
+    return reason;
 }
 

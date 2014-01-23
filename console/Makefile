@@ -40,10 +40,10 @@ LINKER = kernel.ld
 OBJECTS := $(patsubst $(SOURCE)%.s,$(BUILD)%.o,$(wildcard $(SOURCE)*.s)) $(patsubst $(SOURCE)%.c,$(BUILD)%.o,$(wildcard $(SOURCE)*.c))
 
 # Rule to make everything.
-all: $(BUILD) $(TARGET) $(LIST)
+all : $(BUILD) $(TARGET) $(LIST)
 
 # Rule to remake everything. Does not include clean.
-rebuild: clean all 
+rebuild : clean all 
 
 # Rule to make the listing file.
 $(LIST) : $(BUILD)output.elf

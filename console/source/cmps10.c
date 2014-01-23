@@ -26,6 +26,7 @@ uint32_t CMPS10getVersion(void)
 /*
 void cmps10Main()
 {
+
   uint32_t ret_val;
   buffer[0] = 0xFF;
 	printf("i2cmain start\n");
